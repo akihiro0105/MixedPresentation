@@ -9,6 +9,8 @@
 - WindowsパソコンはUnityEditor上かスタンドアロン動作(x86 or x64)で動作
 - UnityEditor上ではパソコンからのメディアの操作も可能
 
+
+youtube : [MixedPresentation](https://youtu.be/Uk7gF6PVKiw)
 ## 内容
 ### HoloLensModule
 - [HoloLensModule](https://github.com/akihiro0105/HoloLensModule)を利用
