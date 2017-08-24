@@ -11,6 +11,32 @@
 
 
 youtube : [MixedPresentation](https://youtu.be/Uk7gF6PVKiw)
+
+## サンプルシーンの使い方
+- 基本的にStreamingAssetsフォルダー内のメディアデータを取得してUnity内に表示します(HoloLensはStreamingAssetsフォルダー+Localフォルダーを利用)
+
+
+- HoloLens側
+1. MixedPresentation.unityを展開しHoloLens用にビルド
+    - ビルド時にPlayerSetting/PublishingSetting/CapabilitiesのInternetClientとInternetClientServerにチェックを入れる
+1. プロジェクトをHoloLens内に配置後起動
+    - パソコン側プロジェクトが起動済みであること
+
+- パソコン側
+    + UnityEditorで利用する場合
+    1. UnityEditorのメニューバーのMixedPresentation/Compositorより別ウィンドウでカメラ画像を表示
+    1. Playボタンを押して再生
+    + スタンドアロンで利用する場合
+    1. PlatformをPCのStandaloneに切り替えてプロジェクトをビルド
+    1. ビルドされたexeファイルから起動
+
+### メディアの追加
+**HoloLens，パソコンのメディアデータは同じになるようにする**
+- HoloLensのアプリ配置後にメディアを追加する場合
+    + デバイスポータルよりFileExplorer/LocalAppData/MixedPresentation/LocalStateに移動
+    + Upload a file to this directoryよりメディアデータをアップロードする
+- パソコンのスタンドアロンビルド生成後にメディアを配置する場合
+    + 生成したexeデータと同じ階層にある*_Dataフォルダ内のStreamingAssetsに配置する
 ## 内容
 ### HoloLensModule
 - [HoloLensModule](https://github.com/akihiro0105/HoloLensModule)を利用
