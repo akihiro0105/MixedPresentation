@@ -13,7 +13,8 @@ namespace MixedPresentation
     public class TcpNetworkObjectControl : MonoBehaviour
     {
         public GameObject PresentationCamera;
-        private TcpNetworkClientManager client;
+        private TcpNetworkClientManager tcpclient;
+        private TcpNetworkServerManager tcpserver;
         private UdpNetworkClientManager udpclient;
         private UdpNetworkListenManager udpserver;
         private MediaObjectManager mediaobject;
@@ -48,12 +49,9 @@ namespace MixedPresentation
             mediaobject = GetComponent<MediaObjectManager>();
             mediaobject.MediaLoadCompleteEvent += MediaLoadCompleteEvent;
             mediaobject.LoadMediaObjects();
-            client = GetComponent<TcpNetworkClientManager>();
-            client.ConnectMessage += ConnectMessage;
-            client.ReceiveMessage += ReceiveMessage;
-            udpserver = GetComponent<UdpNetworkListenManager>();
+            udpserver = new UdpNetworkListenManager(8000);
             udpserver.UdpNetworkListenEvent += UdpNetworkListenEvent;
-            udpclient = GetComponent<UdpNetworkClientManager>();
+            udpclient = new UdpNetworkClientManager(8000);
 #if UNITY_UWP
 #elif UNITY_EDITOR || UNITY_STANDALONE
             IPAddress[] address = Dns.GetHostAddresses(Dns.GetHostName());
@@ -83,7 +81,7 @@ namespace MixedPresentation
             {
                 if (objectlist[i].transform.localPosition!= objecttransformlist[i].Position || objectlist[i].transform.localRotation != objecttransformlist[i].Rotation|| objectlist[i].transform.localScale != objecttransformlist[i].Scale)
                 {
-                    client.SendMessage(SetTransformByteList(i, objectlist[i].transform.localPosition, objectlist[i].transform.localRotation, objectlist[i].transform.localScale));
+                    tcpclient.SendMessage(SetTransformByteList(i, objectlist[i].transform.localPosition, objectlist[i].transform.localRotation, objectlist[i].transform.localScale));
                     objecttransformlist[i].Position = objectlist[i].transform.localPosition;
                     objecttransformlist[i].Rotation = objectlist[i].transform.localRotation;
                     objecttransformlist[i].Scale = objectlist[i].transform.localScale;
@@ -93,12 +91,22 @@ namespace MixedPresentation
             {
                 for (int i = 0; i < objectlist.Count; i++)
                 {
-                    TcpNetworkServerManager.Instance.SendMessage(SetTransformByteList(i, objectlist[i].transform.localPosition, objectlist[i].transform.localRotation, objectlist[i].transform.localScale));
+                    tcpserver.SendMessage(SetTransformByteList(i, objectlist[i].transform.localPosition, objectlist[i].transform.localRotation, objectlist[i].transform.localScale));
                 }
                 ConnectedFlag = false;
             }
+#if UNITY_UWP
+#elif UNITY_EDITOR || UNITY_STANDALONE
+            udpclient.SendMessage(ServerIP);
+#endif
+        }
 
-            udpclient.UDPSendMessage(ServerIP);
+        void OnDestroy()
+        {
+            udpclient.DeleteManager();
+            udpserver.DeleteManager();
+            tcpclient.DeleteManager();
+            tcpserver.DeleteManager();
         }
 
         private void MediaLoadCompleteEvent(List<GameObject> obj)
@@ -118,13 +126,16 @@ namespace MixedPresentation
         {
             while (ServerIP == "") yield return null;
             Debug.Log("Connect Server : "+ServerIP);
-            client.IP = ServerIP;
-            client.Connect();
+
+            tcpserver = new TcpNetworkServerManager(1111);
+            tcpclient = new TcpNetworkClientManager(ServerIP, 1111);
+            tcpclient.ConnectMessage += ConnectMessage;
+            tcpclient.ReceiveMessage += ReceiveMessage;
         }
 
         private void ConnectMessage()
         {
-            client.SendMessage(BitConverter.GetBytes((Int32)MessageType.Connected));
+            tcpclient.SendMessage(BitConverter.GetBytes((Int32)MessageType.Connected));
             ConnectFlag = true;
         }
 
@@ -150,9 +161,13 @@ namespace MixedPresentation
                 default:
                     break;
             }
+#if UNITY_UWP
+#elif UNITY_EDITOR || UNITY_STANDALONE
+            Debug.Log(type);
+#endif
         }
 
-        private void UdpNetworkListenEvent(string data)
+        private void UdpNetworkListenEvent(string data,string address)
         {
             ServerIP = data;
         }
