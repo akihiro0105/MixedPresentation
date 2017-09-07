@@ -19,12 +19,8 @@ namespace HoloLensModule.Network
         
 #elif UNITY_EDITOR || UNITY_STANDALONE
         private TcpListener tcpserver;
-        public class NetThread
-        {
-            public Thread thread;
-            public NetworkStream stream;
-        }
-        private List<NetThread> threads = new List<NetThread>();
+        private List<Thread> threads = new List<Thread>();
+        private List<NetworkStream> streams = new List<NetworkStream>();
         private bool ListenFlag = false;
 #endif
 
@@ -35,10 +31,9 @@ namespace HoloLensModule.Network
             tcpserver = new TcpListener(IPAddress.Any, port);
             tcpserver.Start();
             ListenFlag = true;
-            NetThread nt = new NetThread();
-            nt.thread = new Thread(new ParameterizedThreadStart(ThreadProcess));
-            nt.thread.Start(nt.stream);
-            threads.Add(nt);
+            Thread thread = new Thread(ThreadProcess);
+            thread.Start();
+            threads.Add(thread);
 #endif
         }
 
@@ -47,17 +42,17 @@ namespace HoloLensModule.Network
 #if UNITY_EDITOR || UNITY_STANDALONE
             Debug.Log("Server Stop");
             ListenFlag = false;
-            for (int i = 0; i < threads.Count; i++) threads[i].thread.Abort();
+            for (int i = 0; i < threads.Count; i++) threads[i].Abort();
             threads.Clear();
             tcpserver.Stop();
 #endif
         }
 
-        public void SendMessage(byte[] bytes)
+        public void SendMessage(string data)
         {
 #if UNITY_EDITOR || UNITY_STANDALONE
-            //byte[] bytes = Encoding.UTF8.GetBytes(data);
-            for (int i = 0; i < threads.Count; i++) threads[i].stream.Write(bytes, 0, bytes.Length);
+            byte[] bytes = Encoding.UTF8.GetBytes(data);
+            for (int i = 0; i < streams.Count; i++) if (streams[i].CanWrite) streams[i].Write(bytes, 0, bytes.Length);
 #endif
         }
 
@@ -65,31 +60,30 @@ namespace HoloLensModule.Network
 
         private void ThreadProcess(object obj)
         {
-            NetworkStream stream = (NetworkStream)obj;
             TcpClient tcpclient = tcpserver.AcceptTcpClient();
             IPEndPoint remote = (IPEndPoint)tcpclient.Client.RemoteEndPoint;
             string ip = remote.Address.ToString();
             Debug.Log("Connected " + ip);
             tcpclient.ReceiveTimeout = 100;
-            stream = tcpclient.GetStream();
-            NetThread nt = new NetThread();
-            nt.thread = new Thread(new ParameterizedThreadStart(ThreadProcess));
-            nt.thread.Start(nt.stream);
-            threads.Add(nt);
+            NetworkStream stream = tcpclient.GetStream();
+            streams.Add(stream);
+            Thread thread = new Thread(ThreadProcess);
+            thread.Start();
+            threads.Add(thread);
             while (ListenFlag)
             {
                 try
                 {
                     byte[] bytes = new byte[tcpclient.ReceiveBufferSize];
-                    stream.Read(bytes, 0, (int)tcpclient.ReceiveBufferSize);
-                    //string data= Encoding.UTF8.GetString(bytes);
-                    //if (ReceiveMessage != null) ReceiveMessage(data,ip);
-                    SendMessage(bytes);
+                    stream.Read(bytes, 0, bytes.Length);
+                    string data = Encoding.UTF8.GetString(bytes);
+                    SendMessage(data);
                 }
                 catch (Exception) { }
                 if (tcpclient.Client.Poll(1000, SelectMode.SelectRead) && tcpclient.Client.Available == 0) break;
             }
             stream.Close();
+            stream = null;
             tcpclient.Close();
             Debug.Log("Disconnected " + ip);
         }

@@ -12,6 +12,8 @@ namespace MixedPresentation
 {
     public class TcpNetworkObjectControl : MonoBehaviour
     {
+        public int UDPPort=8000;
+        public int TCPPort = 1234;
         public GameObject PresentationCamera;
         private TcpNetworkClientManager tcpclient;
         private TcpNetworkServerManager tcpserver;
@@ -49,9 +51,9 @@ namespace MixedPresentation
             mediaobject = GetComponent<MediaObjectManager>();
             mediaobject.MediaLoadCompleteEvent += MediaLoadCompleteEvent;
             mediaobject.LoadMediaObjects();
-            udpserver = new UdpNetworkListenManager(8000);
+            udpserver = new UdpNetworkListenManager(UDPPort);
             udpserver.UdpNetworkListenEvent += UdpNetworkListenEvent;
-            udpclient = new UdpNetworkClientManager(8000);
+            udpclient = new UdpNetworkClientManager(UDPPort);
 #if UNITY_UWP
 #elif UNITY_EDITOR || UNITY_STANDALONE
             IPAddress[] address = Dns.GetHostAddresses(Dns.GetHostName());
@@ -60,6 +62,7 @@ namespace MixedPresentation
                 if (item.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
                     ServerIP = item.ToString();
+                    Debug.Log(ServerIP);
                     break;
                 }
             }
@@ -81,7 +84,11 @@ namespace MixedPresentation
             {
                 if (objectlist[i].transform.localPosition!= objecttransformlist[i].Position || objectlist[i].transform.localRotation != objecttransformlist[i].Rotation|| objectlist[i].transform.localScale != objecttransformlist[i].Scale)
                 {
-                    tcpclient.SendMessage(SetTransformByteList(i, objectlist[i].transform.localPosition, objectlist[i].transform.localRotation, objectlist[i].transform.localScale));
+                    JsonMessage ms = new JsonMessage();
+                    ms.type = 1;
+                    ms.jobject.Set(i,objectlist[i]);
+                    string mss = JsonUtility.ToJson(ms);
+                    tcpclient.SendMessage(mss);
                     objecttransformlist[i].Position = objectlist[i].transform.localPosition;
                     objecttransformlist[i].Rotation = objectlist[i].transform.localRotation;
                     objecttransformlist[i].Scale = objectlist[i].transform.localScale;
@@ -91,7 +98,11 @@ namespace MixedPresentation
             {
                 for (int i = 0; i < objectlist.Count; i++)
                 {
-                    tcpserver.SendMessage(SetTransformByteList(i, objectlist[i].transform.localPosition, objectlist[i].transform.localRotation, objectlist[i].transform.localScale));
+                    JsonMessage ms = new JsonMessage();
+                    ms.type = 1;
+                    ms.jobject.Set(i, objectlist[i]);
+                    string mss = JsonUtility.ToJson(ms);
+                    tcpserver.SendMessage(mss);
                 }
                 ConnectedFlag = false;
             }
@@ -126,36 +137,39 @@ namespace MixedPresentation
         {
             while (ServerIP == "") yield return null;
             Debug.Log("Connect Server : "+ServerIP);
-
-            tcpserver = new TcpNetworkServerManager(1111);
-            tcpclient = new TcpNetworkClientManager(ServerIP, 1111);
+            tcpserver = new TcpNetworkServerManager(TCPPort);
+            tcpclient = new TcpNetworkClientManager(ServerIP, TCPPort);
             tcpclient.ConnectMessage += ConnectMessage;
             tcpclient.ReceiveMessage += ReceiveMessage;
         }
 
         private void ConnectMessage()
         {
-            tcpclient.SendMessage(BitConverter.GetBytes((Int32)MessageType.Connected));
+            JsonMessage ms = new JsonMessage();
+            ms.type = 0;
+            string mss = JsonUtility.ToJson(ms);
+            tcpclient.SendMessage(mss);
             ConnectFlag = true;
         }
 
-        private void ReceiveMessage(byte[] data)
+        private void ReceiveMessage(string data)
         {
-            int bytecount = 0;
-            MessageType type = (MessageType)GetToInt32(data, bytecount, out bytecount);
+            JsonMessage ms = new JsonMessage();
+            ms = JsonUtility.FromJson<JsonMessage>(data);
+            MessageType type = (MessageType)ms.type;
             switch (type)
             {
                 case MessageType.Connected:
                     ConnectedFlag = true;
                     break;
                 case MessageType.ObjectTransform:
-                    int id = GetToInt32(data, bytecount, out bytecount);
+                    int id = ms.jobject.num;
                     ObjectTransformFlag = id;
                     if (id >= 0 && id < objectlist.Count)
                     {
-                        objecttransformlist[id].Position = GetToVector3(data, bytecount, out bytecount);
-                        objecttransformlist[id].Rotation = GetToQuaternion(data, bytecount, out bytecount);
-                        objecttransformlist[id].Scale = GetToVector3(data, bytecount, out bytecount);
+                        objecttransformlist[id].Position = new Vector3(ms.jobject.transform.position.x, ms.jobject.transform.position.y, ms.jobject.transform.position.z);
+                        objecttransformlist[id].Rotation = new Quaternion(ms.jobject.transform.rotation.x, ms.jobject.transform.rotation.y, ms.jobject.transform.rotation.z, ms.jobject.transform.rotation.w);
+                        objecttransformlist[id].Scale = new Vector3(ms.jobject.transform.scale.x, ms.jobject.transform.scale.y, ms.jobject.transform.scale.z);
                     }
                     break;
                 default:
@@ -163,7 +177,6 @@ namespace MixedPresentation
             }
 #if UNITY_UWP
 #elif UNITY_EDITOR || UNITY_STANDALONE
-            Debug.Log(type);
 #endif
         }
 
@@ -172,57 +185,64 @@ namespace MixedPresentation
             ServerIP = data;
         }
 
-        private byte[] SetTransformByteList(int id, Vector3 position, Quaternion rotation,Vector3 scale)
+        [Serializable]
+        public class JsonPosition
         {
-            List<byte> listbyte = new List<byte>();
-            listbyte.AddRange(BitConverter.GetBytes((Int32)MessageType.ObjectTransform));
-            listbyte.AddRange(BitConverter.GetBytes((Int32)id));
-            listbyte.AddRange(BitConverter.GetBytes(position.x));
-            listbyte.AddRange(BitConverter.GetBytes(position.y));
-            listbyte.AddRange(BitConverter.GetBytes(position.z));
-            listbyte.AddRange(BitConverter.GetBytes(rotation.x));
-            listbyte.AddRange(BitConverter.GetBytes(rotation.y));
-            listbyte.AddRange(BitConverter.GetBytes(rotation.z));
-            listbyte.AddRange(BitConverter.GetBytes(rotation.w));
-            listbyte.AddRange(BitConverter.GetBytes(scale.x));
-            listbyte.AddRange(BitConverter.GetBytes(scale.y));
-            listbyte.AddRange(BitConverter.GetBytes(scale.z));
-            return listbyte.ToArray();
+            public float x;
+            public float y;
+            public float z;
+            public void Set(Vector3 v) { x = v.x; y = v.y; z = v.z; }
         }
-
-        private Vector3 GetToVector3(byte[] data, int startcount, out int endcount)
+        [Serializable]
+        public class JsonRotation
         {
-            Vector3 v = new Vector3();
-            v.x = GetToSingle(data, startcount, out startcount);
-            v.y = GetToSingle(data, startcount, out startcount);
-            v.z = GetToSingle(data, startcount, out startcount);
-            endcount = startcount;
-            return v;
+            public float x;
+            public float y;
+            public float z;
+            public float w;
+            public void Set(Quaternion v) { x = v.x; y = v.y; z = v.z; w = v.w; }
         }
-
-        private Quaternion GetToQuaternion(byte[] data, int startcount, out int endcount)
+        [Serializable]
+        public class JsonScale
         {
-            Quaternion q = new Quaternion();
-            q.x = GetToSingle(data, startcount, out startcount);
-            q.y = GetToSingle(data, startcount, out startcount);
-            q.z = GetToSingle(data, startcount, out startcount);
-            q.w = GetToSingle(data, startcount, out startcount);
-            endcount = startcount;
-            return q;
+            public float x;
+            public float y;
+            public float z;
+            public void Set(Vector3 v) { x = v.x; y = v.y; z = v.z; }
         }
-
-        private int GetToInt32(byte[] data, int startcount, out int endcount)
+        [Serializable]
+        public class JsonTransform
         {
-            int i = BitConverter.ToInt32(data, startcount);
-            endcount = startcount + sizeof(Int32);
-            return i;
+            public JsonTransform()
+            {
+                position = new JsonPosition();
+                rotation = new JsonRotation();
+                scale = new JsonScale();
+            }
+            public JsonPosition position;
+            public JsonRotation rotation;
+            public JsonScale scale;
+            public void Set(GameObject t)
+            {
+                position.Set(t.transform.localPosition);
+                rotation.Set(t.transform.localRotation);
+                scale.Set(t.transform.localScale);
+            }
         }
-
-        private float GetToSingle(byte[] data, int startcount, out int endcount)
+        [Serializable]
+        public class JsonObject
         {
-            float f = BitConverter.ToSingle(data, startcount);
-            endcount = startcount + sizeof(float);
-            return f;
+            public JsonObject() { transform = new JsonTransform(); }
+            public int num;
+            public JsonTransform transform;
+            public void Set(int num,GameObject obj) { this.num = num; transform.Set(obj); }
+        }
+        [Serializable]
+        public class JsonMessage
+        {
+            public JsonMessage() { jobject = new JsonObject(); }
+            public int type;
+            public JsonObject jobject;
         }
     }
 }
