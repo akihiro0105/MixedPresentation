@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using HoloLensModule;
+using HoloLensModule.Input;
 using HoloLensModule.Network;
 #if UNITY_UWP
 #elif UNITY_EDITOR || UNITY_STANDALONE
@@ -10,7 +12,7 @@ using System.Net;
 
 namespace MixedPresentation
 {
-    public class TcpNetworkObjectControl : MonoBehaviour
+    public class TcpNetworkObjectControl : HoloLensModuleSingleton<TcpNetworkObjectControl>
     {
         public int UDPPort=8000;
         public int TCPPort = 1234;
@@ -21,33 +23,35 @@ namespace MixedPresentation
         private UdpNetworkListenManager udpserver;
         private MediaObjectManager mediaobject;
 
-        public enum MessageType
-        {
-            Connected,
-            ObjectTransform
-        }
         private List<GameObject> objectlist = new List<GameObject>();
-        private bool ConnectFlag = false;
+        private bool LoadCompletedFlag = false;
         public class CurrentTransform
         {
-            public CurrentTransform(Vector3 pos,Quaternion rot,Vector3 scale)
+            public CurrentTransform(Vector3 pos,Quaternion rot,Vector3 scale,bool flag)
             {
                 Position = pos;
                 Rotation = rot;
                 Scale = scale;
+                playflag = flag;
             }
+            public bool playflag;
             public Vector3 Position;
             public Quaternion Rotation;
             public Vector3 Scale;
         }
         private List<CurrentTransform> objecttransformlist = new List<CurrentTransform>();
-        private bool ConnectedFlag = false;
         private int ObjectTransformFlag = -1;
         private string ServerIP = "";
+        JsonMessage sendjson = new JsonMessage();
+        JsonMessage receivejson = new JsonMessage();
+
+        private bool selectnetworkflag = false;
 
         // Use this for initialization
         void Start()
         {
+            HandsGestureManager.HandGestureEvent += HandGestureEvent;
+
             mediaobject = GetComponent<MediaObjectManager>();
             mediaobject.MediaLoadCompleteEvent += MediaLoadCompleteEvent;
             mediaobject.LoadMediaObjects();
@@ -67,70 +71,69 @@ namespace MixedPresentation
                 }
             }
 #endif
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            if (ConnectFlag == false) return;
-            if (ObjectTransformFlag!=-1)
-            {
-                objectlist[ObjectTransformFlag].transform.localPosition = objecttransformlist[ObjectTransformFlag].Position;
-                objectlist[ObjectTransformFlag].transform.localRotation = objecttransformlist[ObjectTransformFlag].Rotation;
-                objectlist[ObjectTransformFlag].transform.localScale = objecttransformlist[ObjectTransformFlag].Scale;
-                ObjectTransformFlag = -1;
-            }
-            for (int i = 0; i < objectlist.Count; i++)
-            {
-                if (objectlist[i].transform.localPosition!= objecttransformlist[i].Position || objectlist[i].transform.localRotation != objecttransformlist[i].Rotation|| objectlist[i].transform.localScale != objecttransformlist[i].Scale)
-                {
-                    JsonMessage ms = new JsonMessage();
-                    ms.type = 1;
-                    ms.jobject.Set(i,objectlist[i]);
-                    string mss = JsonUtility.ToJson(ms);
-                    tcpclient.SendMessage(mss);
-                    objecttransformlist[i].Position = objectlist[i].transform.localPosition;
-                    objecttransformlist[i].Rotation = objectlist[i].transform.localRotation;
-                    objecttransformlist[i].Scale = objectlist[i].transform.localScale;
-                }
-            }
-            if (ConnectedFlag)
-            {
-                for (int i = 0; i < objectlist.Count; i++)
-                {
-                    JsonMessage ms = new JsonMessage();
-                    ms.type = 1;
-                    ms.jobject.Set(i, objectlist[i]);
-                    string mss = JsonUtility.ToJson(ms);
-                    tcpserver.SendMessage(mss);
-                }
-                ConnectedFlag = false;
-            }
-#if UNITY_UWP
-#elif UNITY_EDITOR || UNITY_STANDALONE
-            udpclient.SendMessage(ServerIP);
-#endif
-        }
-
-        void OnDestroy()
-        {
-            udpclient.DeleteManager();
-            udpserver.DeleteManager();
-            tcpclient.DeleteManager();
-            tcpserver.DeleteManager();
+            StartCoroutine(TCPConnect());
         }
 
         private void MediaLoadCompleteEvent(List<GameObject> obj)
         {
             objectlist.Add(PresentationCamera);
-            objecttransformlist.Add(new CurrentTransform(PresentationCamera.transform.localPosition, PresentationCamera.transform.localRotation, PresentationCamera.transform.localScale));
+            objecttransformlist.Add(new CurrentTransform(PresentationCamera.transform.localPosition, PresentationCamera.transform.localRotation, PresentationCamera.transform.localScale,false));
 
             for (int i = 0; i < obj.Count; i++)
             {
                 objectlist.Add(obj[i]);
-                objecttransformlist.Add(new CurrentTransform(obj[i].transform.localPosition,obj[i].transform.localRotation, obj[i].transform.localScale));
+                objecttransformlist.Add(new CurrentTransform(obj[i].transform.localPosition, obj[i].transform.localRotation, obj[i].transform.localScale,false));
             }
-            StartCoroutine(TCPConnect());
+            LoadCompletedFlag = true;
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if (LoadCompletedFlag == false) return;
+            if (ObjectTransformFlag != -1)
+            {
+                objectlist[ObjectTransformFlag].transform.localPosition = objecttransformlist[ObjectTransformFlag].Position;
+                objectlist[ObjectTransformFlag].transform.localRotation = objecttransformlist[ObjectTransformFlag].Rotation;
+                objectlist[ObjectTransformFlag].transform.localScale = objecttransformlist[ObjectTransformFlag].Scale;
+                MediaTapControl tap = objectlist[ObjectTransformFlag].GetComponent<MediaTapControl>();
+                if(tap!=null)tap.SetPlay(objecttransformlist[ObjectTransformFlag].playflag);
+                ObjectTransformFlag = -1;
+            }
+            else
+            {
+                for (int i = 0; i < objectlist.Count; i++)
+                {
+                    MediaTapControl tap = objectlist[i].GetComponent<MediaTapControl>();
+                    bool flag = false;
+                    if (tap != null) flag = tap.GetPlay();
+                    if (objectlist[i].transform.localPosition != objecttransformlist[i].Position || objectlist[i].transform.localRotation != objecttransformlist[i].Rotation || objectlist[i].transform.localScale != objecttransformlist[i].Scale || objecttransformlist[i].playflag != flag)
+                    {
+                        sendjson.type = (int)MessageType.ObjectTransform;
+                        sendjson.jobject.Set(i, objectlist[i].transform.localPosition, objectlist[i].transform.localRotation, objectlist[i].transform.localScale, flag);
+                        SendJsonMessage(JsonUtility.ToJson(sendjson), selectnetworkflag);
+                    }
+                    objecttransformlist[i].Position = objectlist[i].transform.localPosition;
+                    objecttransformlist[i].Rotation = objectlist[i].transform.localRotation;
+                    objecttransformlist[i].Scale = objectlist[i].transform.localScale;
+                    objecttransformlist[i].playflag = flag;
+                }
+            }
+#if UNITY_UWP
+#elif UNITY_EDITOR || UNITY_STANDALONE
+            sendjson.type = (int)MessageType.SendIP;
+            sendjson.ip = ServerIP;
+            SendJsonMessage(JsonUtility.ToJson(sendjson), true);
+#endif
+        }
+
+        protected override void OnDestroy()
+        {
+            udpclient.DeleteManager();
+            udpserver.DeleteManager();
+            tcpclient.DeleteManager();
+            tcpserver.DeleteManager();
+            HandsGestureManager.HandGestureEvent -= HandGestureEvent;
         }
 
         private IEnumerator TCPConnect()
@@ -139,110 +142,51 @@ namespace MixedPresentation
             Debug.Log("Connect Server : "+ServerIP);
             tcpserver = new TcpNetworkServerManager(TCPPort);
             tcpclient = new TcpNetworkClientManager(ServerIP, TCPPort);
-            tcpclient.ConnectMessage += ConnectMessage;
             tcpclient.ReceiveMessage += ReceiveMessage;
         }
 
-        private void ConnectMessage()
-        {
-            JsonMessage ms = new JsonMessage();
-            ms.type = 0;
-            string mss = JsonUtility.ToJson(ms);
-            tcpclient.SendMessage(mss);
-            ConnectFlag = true;
-        }
+        private void ReceiveMessage(string data) { ReceiveJsonMessage(data); }
 
-        private void ReceiveMessage(string data)
+        private void UdpNetworkListenEvent(string data, string address) { ReceiveJsonMessage(data); }
+
+        private void ReceiveJsonMessage(string data)
         {
-            JsonMessage ms = new JsonMessage();
-            ms = JsonUtility.FromJson<JsonMessage>(data);
-            MessageType type = (MessageType)ms.type;
+            receivejson = JsonUtility.FromJson<JsonMessage>(data);
+            MessageType type = (MessageType)receivejson.type;
             switch (type)
             {
-                case MessageType.Connected:
-                    ConnectedFlag = true;
+                case MessageType.SendIP:
+                    ServerIP = receivejson.ip;
                     break;
                 case MessageType.ObjectTransform:
-                    int id = ms.jobject.num;
+                    int id = receivejson.jobject.num;
                     ObjectTransformFlag = id;
                     if (id >= 0 && id < objectlist.Count)
                     {
-                        objecttransformlist[id].Position = new Vector3(ms.jobject.transform.position.x, ms.jobject.transform.position.y, ms.jobject.transform.position.z);
-                        objecttransformlist[id].Rotation = new Quaternion(ms.jobject.transform.rotation.x, ms.jobject.transform.rotation.y, ms.jobject.transform.rotation.z, ms.jobject.transform.rotation.w);
-                        objecttransformlist[id].Scale = new Vector3(ms.jobject.transform.scale.x, ms.jobject.transform.scale.y, ms.jobject.transform.scale.z);
+                        objecttransformlist[id].Position = new Vector3(receivejson.jobject.transform.position.x, receivejson.jobject.transform.position.y, receivejson.jobject.transform.position.z);
+                        objecttransformlist[id].Rotation = new Quaternion(receivejson.jobject.transform.rotation.x, receivejson.jobject.transform.rotation.y, receivejson.jobject.transform.rotation.z, receivejson.jobject.transform.rotation.w);
+                        objecttransformlist[id].Scale = new Vector3(receivejson.jobject.transform.scale.x, receivejson.jobject.transform.scale.y, receivejson.jobject.transform.scale.z);
+                        objecttransformlist[id].playflag = receivejson.jobject.play;
                     }
                     break;
                 default:
                     break;
             }
-#if UNITY_UWP
-#elif UNITY_EDITOR || UNITY_STANDALONE
-#endif
         }
 
-        private void UdpNetworkListenEvent(string data,string address)
+        public void SendJsonMessage(string data,bool udpflag=false)
         {
-            ServerIP = data;
+            if (udpflag) udpclient.SendMessage(data);
+            else tcpclient.SendMessage(data);
         }
 
-        [Serializable]
-        public class JsonPosition
+        private void HandGestureEvent(HandsGestureManager.HandGestureState state)
         {
-            public float x;
-            public float y;
-            public float z;
-            public void Set(Vector3 v) { x = v.x; y = v.y; z = v.z; }
-        }
-        [Serializable]
-        public class JsonRotation
-        {
-            public float x;
-            public float y;
-            public float z;
-            public float w;
-            public void Set(Quaternion v) { x = v.x; y = v.y; z = v.z; w = v.w; }
-        }
-        [Serializable]
-        public class JsonScale
-        {
-            public float x;
-            public float y;
-            public float z;
-            public void Set(Vector3 v) { x = v.x; y = v.y; z = v.z; }
-        }
-        [Serializable]
-        public class JsonTransform
-        {
-            public JsonTransform()
+            if (state == HandsGestureManager.HandGestureState.MultiDoubleTap)
             {
-                position = new JsonPosition();
-                rotation = new JsonRotation();
-                scale = new JsonScale();
+                Debug.Log("Select Network");
+                selectnetworkflag = !selectnetworkflag;
             }
-            public JsonPosition position;
-            public JsonRotation rotation;
-            public JsonScale scale;
-            public void Set(GameObject t)
-            {
-                position.Set(t.transform.localPosition);
-                rotation.Set(t.transform.localRotation);
-                scale.Set(t.transform.localScale);
-            }
-        }
-        [Serializable]
-        public class JsonObject
-        {
-            public JsonObject() { transform = new JsonTransform(); }
-            public int num;
-            public JsonTransform transform;
-            public void Set(int num,GameObject obj) { this.num = num; transform.Set(obj); }
-        }
-        [Serializable]
-        public class JsonMessage
-        {
-            public JsonMessage() { jobject = new JsonObject(); }
-            public int type;
-            public JsonObject jobject;
         }
     }
 }
