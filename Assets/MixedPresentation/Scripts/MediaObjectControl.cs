@@ -23,11 +23,11 @@ namespace MixedPresentation
         private string path = "";
         [SerializeField]
         private bool onAwake = false;
-        public bool playOnAwake = false;
         public Texture defaultTexture = null;
         [Header("Image")]
         public float ImageScale = 1000;
         [Header("Audio&Video")]
+        public bool playOnAwake = false;
         public bool isLoop = false;
 
         private AudioSource audiosource;
@@ -105,6 +105,13 @@ namespace MixedPresentation
         {
             if (type == MediaType.Audio) audiosource.Stop();
             else if (type == MediaType.Video) videoplayer.Stop();
+        }
+
+        public bool isPlay()
+        {
+            if (type == MediaType.Audio) return audiosource.isPlaying;
+            else if (type == MediaType.Video) return videoplayer.isPlaying;
+            return false;
         }
     }
 }

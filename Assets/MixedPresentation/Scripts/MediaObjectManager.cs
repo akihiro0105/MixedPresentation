@@ -92,8 +92,7 @@ namespace MixedPresentation
             obj.transform.SetParent(transform);
             obj.transform.localPosition = new Vector3(0,0,1);
             obj.transform.localRotation = Quaternion.identity;
-            obj.transform.localRotation = Quaternion.Euler(0, 180, 0);
-            MediaObjectControl moc = obj.GetComponent<MediaObjectControl>();
+            MediaObjectControl moc = obj.transform.GetChild(0).GetComponent<MediaObjectControl>();
             moc.LoadMedia(path, type);
             MediaObjects.Add(obj);
         }
