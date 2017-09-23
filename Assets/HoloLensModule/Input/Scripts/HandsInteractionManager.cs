@@ -38,7 +38,7 @@ namespace HoloLensModule.Input
         void Start()
         {
 #if UNITY_EDITOR || UNITY_UWP
-#if !UNITY_2017_2_OR_NEWRE
+#if !UNITY_2017_2_OR_NEWER
             InteractionManager.SourceDetected += SourceDetected;
             InteractionManager.SourceUpdated += SourceUpdated;
             InteractionManager.SourceLost += SourceLost;
@@ -63,7 +63,7 @@ namespace HoloLensModule.Input
         protected override void OnDestroy()
         {
 #if UNITY_EDITOR || UNITY_UWP
-#if !UNITY_2017_2_OR_NEWRE
+#if !UNITY_2017_2_OR_NEWER
             InteractionManager.SourceDetected -= SourceDetected;
             InteractionManager.SourceUpdated -= SourceUpdated;
             InteractionManager.SourceLost -= SourceLost;
@@ -91,7 +91,7 @@ namespace HoloLensModule.Input
         }
 
 #if UNITY_EDITOR || UNITY_UWP
-#if !UNITY_2017_2_OR_NEWRE
+#if !UNITY_2017_2_OR_NEWER
         void SourceDetected(InteractionSourceState state)
         {
             Vector3 v;
