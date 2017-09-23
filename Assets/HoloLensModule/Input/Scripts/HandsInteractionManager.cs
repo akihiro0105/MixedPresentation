@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR || UNITY_UWP
-#if !UNITY_2017_2_OR_NEWRE
+#if !UNITY_2017_2_OR_NEWER
 using UnityEngine.VR.WSA.Input;
 #else
 using UnityEngine.XR.WSA.Input;
