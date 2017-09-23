@@ -15,6 +15,7 @@ namespace MixedPresentation
     public class TcpNetworkObjectControl : HoloLensModuleSingleton<TcpNetworkObjectControl>
     {
         public int UDPPort=8000;
+        public bool NoUseTCP = false;
         public int TCPPort = 1234;
         public GameObject PresentationCamera;
         private TcpNetworkClientManager tcpclient;
@@ -44,8 +45,6 @@ namespace MixedPresentation
         private string ServerIP = "";
         JsonMessage sendjson = new JsonMessage();
         JsonMessage receivejson = new JsonMessage();
-
-        private bool selectnetworkflag = false;
 
         // Use this for initialization
         void Start()
@@ -111,7 +110,7 @@ namespace MixedPresentation
                     {
                         sendjson.type = (int)MessageType.ObjectTransform;
                         sendjson.jobject.Set(i, objectlist[i].transform.localPosition, objectlist[i].transform.localRotation, objectlist[i].transform.localScale, flag);
-                        SendJsonMessage(JsonUtility.ToJson(sendjson), selectnetworkflag);
+                        SendJsonMessage(JsonUtility.ToJson(sendjson), NoUseTCP);
                     }
                     objecttransformlist[i].Position = objectlist[i].transform.localPosition;
                     objecttransformlist[i].Rotation = objectlist[i].transform.localRotation;
@@ -160,9 +159,9 @@ namespace MixedPresentation
                     break;
                 case MessageType.ObjectTransform:
                     int id = receivejson.jobject.num;
-                    ObjectTransformFlag = id;
                     if (id >= 0 && id < objectlist.Count)
                     {
+                        ObjectTransformFlag = id;
                         objecttransformlist[id].Position = new Vector3(receivejson.jobject.transform.position.x, receivejson.jobject.transform.position.y, receivejson.jobject.transform.position.z);
                         objecttransformlist[id].Rotation = new Quaternion(receivejson.jobject.transform.rotation.x, receivejson.jobject.transform.rotation.y, receivejson.jobject.transform.rotation.z, receivejson.jobject.transform.rotation.w);
                         objecttransformlist[id].Scale = new Vector3(receivejson.jobject.transform.scale.x, receivejson.jobject.transform.scale.y, receivejson.jobject.transform.scale.z);
@@ -185,7 +184,7 @@ namespace MixedPresentation
             if (state == HandsGestureManager.HandGestureState.MultiDoubleTap)
             {
                 Debug.Log("Select Network");
-                selectnetworkflag = !selectnetworkflag;
+                NoUseTCP = !NoUseTCP;
             }
         }
     }
