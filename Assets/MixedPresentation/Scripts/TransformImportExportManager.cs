@@ -5,6 +5,15 @@ using System.IO;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+#if UNITY_UWP
+using System;
+using Windows.Storage;
+using System.Threading.Tasks;
+#elif UNITY_EDITOR || UNITY_STANDALONE
+using System.Threading;
+#endif
+
+// json形式で保存に変更
 
 namespace MixedPresentation
 {
@@ -15,8 +24,15 @@ namespace MixedPresentation
         private KeyCode exportcode = KeyCode.E;
         [SerializeField]
         private KeyCode importcode = KeyCode.I;
-        public string filename = "transform.position";
-        public GameObject ImportExportParentObject = null;
+        public string filename = "transform.json";
+
+        [HideInInspector]
+        public string SaveDirectoryName = "";
+        [HideInInspector]
+        public JsonSaveGameobject jsonobject = new JsonSaveGameobject();
+
+        public delegate void TransformImportEventHandler(JsonSaveGameobject jsonsave);
+        public TransformImportEventHandler TransformImportEvent;
 
 #if UNITY_EDITOR
         [CustomEditor(typeof(TransformImportExportManager))]
@@ -26,24 +42,11 @@ namespace MixedPresentation
             {
                 base.OnInspectorGUI();
                 TransformImportExportManager obj = (TransformImportExportManager)target;
-                if (GUILayout.Button("Export Transform"))
-                {
-                    Debug.Log("Export Transform");
-                    obj.ExportTransform();
-                }
-                if (GUILayout.Button("Import Transform"))
-                {
-                    Debug.Log("Import Transform");
-                    obj.ImportTransform();
-                }
+                if (GUILayout.Button("Export Transform")) obj.ExportTransform();
+                if (GUILayout.Button("Import Transform")) obj.ImportTransform();
             }
         }
 #endif
-        // Use this for initialization
-        void Start()
-        {
-
-        }
 
         // Update is called once per frame
         void Update()
@@ -52,96 +55,53 @@ namespace MixedPresentation
             if (UnityEngine.Input.GetKeyUp(importcode)) ImportTransform();
         }
 
-        public void ExportTransform()
-        {
-#if UNITY_UWP
-#elif UNITY_EDITOR || UNITY_STANDALONE
-#endif
-            StartCoroutine(Export());
-        }
+        public void ExportTransform() { StartCoroutine(Export()); }
 
         private IEnumerator Export()
         {
+            bool isWriteFlag = false;
 #if UNITY_UWP
+            Task.Run(async () =>
+            {
+                var folder = await ApplicationData.Current.LocalFolder.GetFolderAsync(SaveDirectoryName);
+                var file = await folder.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
+                await FileIO.WriteTextAsync(file, JsonUtility.ToJson(jsonobject));
+                isWriteFlag = true;
+            });
 #elif UNITY_EDITOR || UNITY_STANDALONE
-            FileInfo info = new FileInfo(Application.streamingAssetsPath+"/"+filename);
-            StreamWriter sw = info.CreateText();
-            GameObject obj = gameObject;
-            int childcount = gameObject.transform.childCount;
-            if (ImportExportParentObject != null)
-            {
-                obj = ImportExportParentObject;
-                childcount = ImportExportParentObject.transform.childCount;
-            }
-            sw.WriteLine(childcount);
-            for (int i = 0; i < childcount; i++)
-            {
-                GameObject go = obj.transform.GetChild(i).gameObject;
-                sw.WriteLine(go.name);
-                sw.WriteLine(go.transform.localPosition.x);
-                sw.WriteLine(go.transform.localPosition.y);
-                sw.WriteLine(go.transform.localPosition.z);
-                sw.WriteLine(go.transform.localRotation.x);
-                sw.WriteLine(go.transform.localRotation.y);
-                sw.WriteLine(go.transform.localRotation.z);
-                sw.WriteLine(go.transform.localRotation.w);
-                sw.WriteLine(go.transform.localScale.x);
-                sw.WriteLine(go.transform.localScale.y);
-                sw.WriteLine(go.transform.localScale.z);
-                yield return null;
-            }
-            sw.Flush();
-            sw.Close();
+            string writepath = Application.dataPath + "\\..\\" + SaveDirectoryName;
+            Thread thread = new Thread(()=> {
+                FileInfo info = new FileInfo(writepath + "\\" + filename);
+                StreamWriter sw = info.CreateText();
+                sw.Write(JsonUtility.ToJson(jsonobject));
+                sw.Flush();
+                sw.Close();
+                isWriteFlag = true;
+            });
+            thread.Start();
 #endif
-            yield return null;
+            yield return new WaitUntil(() => isWriteFlag);
+            Debug.Log("Export Transform");
         }
 
-        public void ImportTransform()
-        {
-            StartCoroutine(Import());
-        }
+        public void ImportTransform() { StartCoroutine(Import()); }
 
         private IEnumerator Import()
         {
+            string path = "";
 #if UNITY_UWP
+            path = ApplicationData.Current.LocalFolder.Path + "\\" + SaveDirectoryName;
 #elif UNITY_EDITOR || UNITY_STANDALONE
-            FileInfo info = new FileInfo(Application.streamingAssetsPath + "/" + filename);
-            StreamReader sr = info.OpenText();
-            int srcount = int.Parse(sr.ReadLine());
-            GameObject parent= gameObject;
-            if (ImportExportParentObject != null) parent = ImportExportParentObject;
-            for (int i = 0; i < srcount; i++)
-            {
-                string name = sr.ReadLine();
-                Vector3 pos = new Vector3();
-                Quaternion rot = new Quaternion();
-                Vector3 sca = new Vector3();
-                pos.x = float.Parse(sr.ReadLine());
-                pos.y = float.Parse(sr.ReadLine());
-                pos.z = float.Parse(sr.ReadLine());
-                rot.x = float.Parse(sr.ReadLine());
-                rot.y = float.Parse(sr.ReadLine());
-                rot.z = float.Parse(sr.ReadLine());
-                rot.w = float.Parse(sr.ReadLine());
-                sca.x = float.Parse(sr.ReadLine());
-                sca.y = float.Parse(sr.ReadLine());
-                sca.z = float.Parse(sr.ReadLine());
-                for (int j = 0; j < parent.transform.childCount; j++)
-                {
-                    GameObject go = parent.transform.GetChild(j).gameObject;
-                    if (go.name == name)
-                    {
-                        go.transform.localPosition = pos;
-                        go.transform.localRotation = rot;
-                        go.transform.localScale = sca;
-                        break;
-                    }
-                }
-                yield return null;
-            }
-            sr.Close();
+            path = Application.dataPath + "\\..\\" + SaveDirectoryName;
 #endif
-            yield return null;
+            using (WWW www = new WWW("file://"+path+"\\"+ filename))
+            {
+                yield return www;
+                JsonSaveGameobject JsonMediaObject = new JsonSaveGameobject();
+                JsonMediaObject = JsonUtility.FromJson<JsonSaveGameobject>(www.text);
+                if (TransformImportEvent != null) TransformImportEvent(JsonMediaObject);
+            }
+            Debug.Log("Import Transform");
         }
     }
 }

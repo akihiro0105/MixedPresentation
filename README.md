@@ -13,23 +13,45 @@
 youtube : [MixedPresentation](https://youtu.be/Uk7gF6PVKiw)
 
 ## サンプルシーンの使い方
-- 基本的にStreamingAssetsフォルダー内のメディアデータを取得してUnity内に表示します(HoloLensはStreamingAssetsフォルダー+Localフォルダーを利用)
+- PresentationContentフォルダー内のメディアデータを取得してUnity内に表示します(HoloLensはLocalフォルダ内のPresentationContent)
 
 
 - HoloLens側
 1. MixedPresentation.unityを展開しHoloLens用にビルド
     - ビルド時にPlayerSetting/PublishingSetting/CapabilitiesのInternetClientとInternetClientServerにチェックを入れる
-1. プロジェクトをHoloLens内に配置後起動
-    - パソコン側プロジェクトが起動済みであること
+1. アプリ起動後localフォルダ内(LocalAppData/MixedPresentation/LocalState)にPresentationContentが生成
+1. メディアデータをPresentationContent内にUploadする
+1. アプリを再起動
 
 - パソコン側
     + UnityEditorで利用する場合
+    1. メディアデータをPresentationContent内に配置する
     1. UnityEditorのメニューバーのMixedPresentation/Compositorより別ウィンドウでカメラ画像を表示
     1. Playボタンを押して再生
     + スタンドアロンで利用する場合
     1. PlatformをPCのStandaloneに切り替えてプロジェクトをビルド
-    1. ビルドされたexeファイルから起動
-
+    1. ビルドされたexeファイル起動後にPresentationContentが生成される
+    1. メディアデータをPresentationContent内に配置する
+    1. exeファイルを再起動
+### 操作方法
+- HoloLens側
+    + メディアの移動 : ドラッグ
+    + メディアの回転 : 両手を出して片手だけドラッグ
+    + メディアの拡縮 : 両手を出して両手でドラッグ
+    + メディアの再生，停止 : ダブルタップ
+    + カメラの切り替え : カメラを見てダブルタップ
+    + カメラの移動 : ドラッグ
+    + 基準点の変更 : 両手を出して片手でダブルタップ
+    + メディア配置の保存 : 両手を出して両手でダブルタップ
+    + メディア配置の再生 : 両手を出して片手でホールド
+- パソコン側
+    + メディアの移動，回転，拡縮 : EditorのInspectorから操作
+    + メディアの再生，停止 : 対象メディアのInspectorの「Play」ボタンを押下
+    + カメラの移動 : EditorのInspectorから操作
+    + カメラの切り替え : 数字キーを入力
+    + メディア配置の保存 : キーボードのE or SharingRootObjectのInspectorの「Export Transform」ボタンを押下
+    + メディア配置の再生 : キーボードのI or SharingRootObjectのInspectorの「Import Transform」ボタンを押下
+    
 ### メディアの追加
 **HoloLens，パソコンのメディアデータは同じになるようにする**
 - HoloLensのアプリ配置後にメディアを追加する場合
@@ -49,26 +71,28 @@ youtube : [MixedPresentation](https://youtu.be/Uk7gF6PVKiw)
     + PreviewWindow.cs
         * UnityEditor内の別ウィンドウからフルスクリーンに切り替え
 - Prefabs
-    + MediaObject.prefab
-        * SharingRootObjectで利用するStreamingAssetsからのメディアの表示
-    + SharingRootObject.prefab
-        * ネットワーク処理とメディアの読み込み表示を行う
+    + ControlObject.prefab
+        * SharingRootObjectで利用するメディアの表示
 - Scenes
     + MixPresentation.unity
 - Scripts
     + DesktopCameraViewer.cs
         * 空間内カメラの表示
-    + MediaObjectControl.cs
+    + JsonMessageControl.cs
+        * UDPによる通信をコントロール
+    + JsonMessageData.cs
+        * UDP通信のメッセージを定義
+    + MediaControl.cs
         * メディアの読み込み : 音声(wav)動画(mp4)画像(png,jpg)
-    + MediaObjectManager.cs
-        * StreamingAssetsフォルダからメディアの読み込み処理
-    + TcpNetworkObjectControl.cs
-        * UDPによるサーバーIPのブロードキャスト通知とTCPによるオブジェクトの同期処理
+    + MixedPresentationManager.cs
+        * MixedPresentationをコントロール
+    + PresentationCameraControl.cs
+        * プレゼンテーション用カメラのコントロール
     + TransformImportExportManager.cs
         * 配置したメディア，カメラのTransform情報の保存，再生
-### StreamingAssets
+### PresentationContent
 - sampleimage.png
-- dummy.dummy
-    + StreamingAssetsフォルダが空だとHololensのパッケージ内でStreamingAssetsフォルダが生成されないため必要
+
 ## 今後の予定
-- Unity，VisualStudioのバージョンアップに伴う改修
+- Unity2017.2の対応
+- Windows Immersive HMDの対応+モーションコントローラーの対応
