@@ -103,6 +103,7 @@ namespace MixedPresentation
                 }
             }
             ResetTransform();
+            boundingbox.isActive(false,true);
         }
 
 #if UNITY_EDITOR
