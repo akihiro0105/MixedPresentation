@@ -7,6 +7,7 @@
 /UWP/
 /bin/
 /bin_win/
+/bin_uwp/
 
 # Visual Studio 2015 cache directory
 /.vs/

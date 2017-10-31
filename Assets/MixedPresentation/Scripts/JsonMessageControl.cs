@@ -7,6 +7,7 @@ namespace MixedPresentation
 {
     public class JsonMessageControl : MonoBehaviour
     {
+        public string BroadcastAddress = "";
         public int UDPport = 8000;
 
         private UdpNetworkClientManager udpclient;
@@ -22,7 +23,8 @@ namespace MixedPresentation
         // Use this for initialization
         void Start()
         {
-            udpclient = new UdpNetworkClientManager(UDPport);
+            if (BroadcastAddress == null || BroadcastAddress == "") udpclient = new UdpNetworkClientManager(UDPport);
+            else udpclient = new UdpNetworkClientManager(UDPport, BroadcastAddress);
             udpserver = new UdpNetworkListenManager(UDPport);
             udpserver.UdpNetworkListenEvent += UdpNetworkListenEvent;
         }
