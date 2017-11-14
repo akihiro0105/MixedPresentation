@@ -27,9 +27,4 @@ public class SkyboxControl : MonoBehaviour {
     #endif
 #endif
     }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }

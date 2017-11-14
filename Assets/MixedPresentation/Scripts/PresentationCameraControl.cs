@@ -13,7 +13,6 @@ namespace MixedPresentation
         public GameObject CameraObject;
 
         private Boundingbox boundingbox;
-        private bool focusflag = false;
         private bool tapflag = false;
         private Vector3 bufpos;
         private Quaternion bufrot;
@@ -22,15 +21,9 @@ namespace MixedPresentation
         // Use this for initialization
         void Start()
         {
-            HandsGestureManager.HandGestureEvent += HandGestureEvent;
             boundingbox = GetComponent<Boundingbox>();
             ResetTransform();
             CameraObject.GetComponent<Renderer>().material = UnActiveMaterial;
-        }
-
-        void OnDestroy()
-        {
-            HandsGestureManager.HandGestureEvent -= HandGestureEvent;
         }
 
         public void isActiveCamera(bool flag)
@@ -39,9 +32,9 @@ namespace MixedPresentation
             else CameraObject.GetComponent<Renderer>().material = UnActiveMaterial;
         }
 
-        private void HandGestureEvent(HandsGestureManager.HandGestureState state)
+        public void SetTapAction()
         {
-            if (state == HandsGestureManager.HandGestureState.DoubleTap && focusflag == true) tapflag = true;
+            tapflag = true;
         }
 
         public bool GetTapFlag()
@@ -53,14 +46,12 @@ namespace MixedPresentation
 
         public void FocusEnd()
         {
-            focusflag = false;
-            if (boundingbox) boundingbox.isActive(focusflag);
+            if (boundingbox) boundingbox.isActive(false);
         }
 
         public void FocusEnter()
         {
-            focusflag = true;
-            if (boundingbox) boundingbox.isActive(focusflag);
+            if (boundingbox) boundingbox.isActive(true);
         }
 
         public bool GetTransform()
