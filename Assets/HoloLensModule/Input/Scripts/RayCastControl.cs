@@ -1,6 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR || UNITY_UWP
+#if !UNITY_2017_2_OR_NEWER
+using UnityEngine.VR.WSA;
+#else
+using UnityEngine.XR.WSA;
+#endif
+#endif
 
 namespace HoloLensModule.Input
 {
@@ -12,6 +19,22 @@ namespace HoloLensModule.Input
         private GameObject bufobj = null;
         private RaycastHit info;
         private FocusInterface[] fs;
+
+        void Update()
+        {
+#if UNITY_EDITOR || UNITY_UWP
+#if !UNITY_2017_2_OR_NEWER
+            if (bufobj != null)
+#else
+            if (bufobj != null && HolographicSettings.IsDisplayOpaque == false)
+#endif
+            {
+                Vector3 normal = -Camera.main.transform.forward;
+                Vector3 position = bufobj.transform.position;
+                HolographicSettings.SetFocusPointForFrame(position, normal);
+            }
+#endif
+        }
 
         void FixedUpdate()
         {

@@ -13,10 +13,10 @@ namespace HoloLensModule
         public enum ActiveDeviceModel
         {
             Standalone_or_Editor,
-#if UNITY_2017_2_OR_NEWER
-            ImmersiveDevice,
-#endif
             MRDevice
+#if UNITY_2017_2_OR_NEWER
+            ,ImmersiveDevice
+#endif
         }
         [SerializeField]
         public ActiveDeviceModel ActiveDevice = ActiveDeviceModel.Standalone_or_Editor;
