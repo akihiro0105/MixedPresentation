@@ -56,7 +56,7 @@ namespace MixedPresentation
             for (int i = 0; i < PresentationCameras.Length; i++) MediaObject.Add(PresentationCameras[i].name, PresentationCameras[i]);
 
             jsonmessagecontrol = GetComponent<JsonMessageControl>();
-            if (jsonmessagecontrol) gameObject.AddComponent<JsonMessageControl>();
+            if (jsonmessagecontrol==null) gameObject.AddComponent<JsonMessageControl>();
             jsonmessagecontrol.ReceiveCameraJsonMessage += ReceiveCameraJsonMessage;
             jsonmessagecontrol.ReceivePlayJsonMessage += ReceivePlayJsonMessage;
             jsonmessagecontrol.ReceiveTransformJsonMessage += ReceiveTransformJsonMessage;
