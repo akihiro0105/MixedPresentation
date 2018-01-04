@@ -44,10 +44,23 @@ namespace HoloLensModule.Input
 
         private void FocusInterfaceObject(GameObject obj)
         {
-            if (obj == null) SetFocusEnd();
+            if (obj == null)
+            {
+                SetFocusEnd();
+            }
             else
             {
-                if (obj.GetComponent<FocusInterface>() == null) FocusInterfaceObject(obj.transform.parent.gameObject);
+                if (obj.GetComponent<FocusInterface>() == null)
+                {
+                    if (obj.transform.parent == null)
+                    {
+                        FocusInterfaceObject(null);
+                    }
+                    else
+                    {
+                        FocusInterfaceObject(obj.transform.parent.gameObject);
+                    }
+                }
                 else
                 {
                     if (bufobj != obj) SetFocusEnd();
