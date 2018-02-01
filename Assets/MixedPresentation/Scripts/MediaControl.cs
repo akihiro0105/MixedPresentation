@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.Video;
+using HoloLensModule.Utility;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

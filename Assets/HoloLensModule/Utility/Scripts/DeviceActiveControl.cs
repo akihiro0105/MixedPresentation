@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace HoloLensModule
+namespace HoloLensModule.Utility
 {
     // HoloLens or DeskTopのみでアクティブにする
     public class DeviceActiveControl : MonoBehaviour
@@ -8,11 +8,11 @@ namespace HoloLensModule
         [SerializeField]
         public enum ActiveDeviceModel
         {
-            Standalone,
-            MRDevice
+            MRDevice,
+            Other
         }
         
-        public ActiveDeviceModel ActiveDevice = ActiveDeviceModel.Standalone;
+        public ActiveDeviceModel ActiveDevice = ActiveDeviceModel.MRDevice;
 
         // Use this for initialization
         void Start()
@@ -22,16 +22,16 @@ namespace HoloLensModule
             {
                 gameObject.SetActive((ActiveDevice == ActiveDeviceModel.MRDevice) ? true : false);
             }
-            else if (UnityEditor.EditorUserBuildSettings.activeBuildTarget == UnityEditor.BuildTarget.StandaloneWindows64)
+            else
             {
-                gameObject.SetActive((ActiveDevice == ActiveDeviceModel.Standalone) ? true : false);
+                gameObject.SetActive((ActiveDevice == ActiveDeviceModel.Other) ? true : false);
             }
 #else
             if (Application.platform == RuntimePlatform.WSAPlayerX86 || Application.platform == RuntimePlatform.WSAPlayerX64)
             {
                 gameObject.SetActive((ActiveDevice == ActiveDeviceModel.MRDevice) ? true : false);
             }
-            else if (Application.platform == RuntimePlatform.WindowsPlayer)
+            else
             {
                 gameObject.SetActive((ActiveDevice == ActiveDeviceModel.Standalone) ? true : false);
             }

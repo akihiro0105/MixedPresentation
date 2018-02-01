@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using HoloLensModule.Input;
+using HoloLensModule.Utility;
 
 public class WindowPanelControl : MonoBehaviour
 {

@@ -11,13 +11,12 @@ using UnityEngine.XR.WSA.Persistence;
 #endif
 #endif
 
-namespace HoloLensModule
+namespace HoloLensModule.Environment
 {
     // オブジェクトのWorldAnchorコントロール
     public class WorldAnchorControl : MonoBehaviour
     {
-        public bool SetOnAwake = false;
-        public bool DestroyAnchorClear = false;// 再起動時に位置を復帰させる場合false
+        public bool RemoveWorldAnchorOnDestory = false;
 #if UNITY_EDITOR || UNITY_UWP
         private WorldAnchorStore anchorstore = null;
 #endif
@@ -25,53 +24,40 @@ namespace HoloLensModule
         void Start()
         {
 #if UNITY_EDITOR || UNITY_UWP
-            WorldAnchorStore.GetAsync((store)=> {
+            WorldAnchorStore.GetAsync((store) =>
+            {
                 anchorstore = store;
-                string[] ids = anchorstore.GetAllIds();
-                for (int i = 0; i < ids.Length; i++)
-                {
-                    if (ids[i] == gameObject.name)
-                    {
-                        anchorstore.Load(gameObject.name, gameObject);
-                        break;
-                    }
-                }
-                if (SetOnAwake) SetWorldAnchor();
+                anchorstore.Load(gameObject.name, gameObject);
+                RemoveWorldAnchor();
+                SetWorldAnchor();
             });
 #endif
         }
 
         void OnDestroy()
         {
-            if (DestroyAnchorClear) DeleteWorldAnchor();
+            if (RemoveWorldAnchorOnDestory == true)
+            {
+                RemoveWorldAnchor();
+            }
         }
 
-        public void SetWorldAnchor()
+        public bool isLocatedWorldAnchor()
         {
-            DeleteWorldAnchor();
 #if UNITY_EDITOR || UNITY_UWP
             if (anchorstore != null)
             {
-                WorldAnchor worldanchor = gameObject.AddComponent<WorldAnchor>();
-                worldanchor.name = gameObject.name;
-                if (worldanchor.isLocated) anchorstore.Save(worldanchor.name, worldanchor);
-                else worldanchor.OnTrackingChanged += OnTrackingChanged;
+                WorldAnchor worldanchor = gameObject.GetComponent<WorldAnchor>();
+                if (worldanchor != null && worldanchor.isLocated == true)
+                {
+                    return true;
+                }
             }
 #endif
+            return false;
         }
 
-#if UNITY_EDITOR || UNITY_UWP
-        private void OnTrackingChanged(WorldAnchor self, bool located)
-        {
-            if (located)
-            {
-                anchorstore.Save(self.name, self);
-                self.OnTrackingChanged -= OnTrackingChanged;
-            }
-        }
-#endif
-
-        public void DeleteWorldAnchor()
+        public void RemoveWorldAnchor()
         {
 #if UNITY_EDITOR || UNITY_UWP
             if (anchorstore != null)
@@ -86,12 +72,50 @@ namespace HoloLensModule
 #endif
         }
 
-        // WorldAnchorの全体削除
-        public void AllClearWorldAnchor()
+        public void SetWorldAnchor()
         {
 #if UNITY_EDITOR || UNITY_UWP
-            if (anchorstore != null) anchorstore.Clear();
+            if (anchorstore != null)
+            {
+                WorldAnchor worldanchor = gameObject.GetComponent<WorldAnchor>();
+                if (worldanchor == null)
+                {
+                    worldanchor = gameObject.AddComponent<WorldAnchor>();
+                }
+                worldanchor.name = gameObject.name;
+                if (worldanchor.isLocated == true)
+                {
+                    anchorstore.Save(worldanchor.name, worldanchor);
+                }
+                else
+                {
+                    worldanchor.OnTrackingChanged += OnTrackingChanged;
+                }
+            }
 #endif
         }
+
+#if UNITY_EDITOR || UNITY_UWP
+        private void OnTrackingChanged(WorldAnchor self, bool located)
+        {
+            if (located == true)
+            {
+                anchorstore.Save(self.name, self);
+                self.OnTrackingChanged -= OnTrackingChanged;
+            }
+        }
+#endif
+
+        #region All WorldAnchor Function
+        public void ClearAllWorldAnchor()
+        {
+#if UNITY_EDITOR || UNITY_UWP
+            if (anchorstore != null)
+            {
+                anchorstore.Clear();
+            }
+#endif
+        }
+        #endregion
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoloLensModule
+namespace HoloLensModule.Utility
 {
     public class BodyLockObject : MonoBehaviour
     {
