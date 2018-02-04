@@ -47,12 +47,12 @@ namespace MixedPresentation
 
         public void FocusEnd()
         {
-            if (boundingbox) boundingbox.isActive(false);
+            //if (boundingbox) boundingbox.isActive(false);
         }
 
         public void FocusEnter()
         {
-            if (boundingbox) boundingbox.isActive(true);
+            //if (boundingbox) boundingbox.isActive(true);
         }
 
         public bool GetTransform()

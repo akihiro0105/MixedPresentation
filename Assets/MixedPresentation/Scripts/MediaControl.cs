@@ -104,7 +104,7 @@ namespace MixedPresentation
                 }
             }
             ResetTransform();
-            boundingbox.isActive(false,true);
+            //boundingbox.isActive(false,true);
         }
 
 #if UNITY_EDITOR
@@ -151,13 +151,13 @@ namespace MixedPresentation
         public void FocusEnter()
         {
             focusflag = true;
-            if (boundingbox) boundingbox.isActive(focusflag);
+            //if (boundingbox) boundingbox.isActive(focusflag);
         }
 
         public void FocusEnd()
         {
             focusflag = false;
-            if (boundingbox) boundingbox.isActive(focusflag);
+            //if (boundingbox) boundingbox.isActive(focusflag);
         }
 
         public bool GetTransform()

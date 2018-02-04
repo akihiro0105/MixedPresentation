@@ -81,7 +81,7 @@ public class WindowPanelControl : MonoBehaviour
     private void AdjustActive(bool flag)
     {
         HidePanel.SetActive(flag);
-        boundingbox.isActive(flag);
+        //boundingbox.isActive(flag);
         WindowSetFlag = flag;
         if (boundingboxcollider == null)
         {
