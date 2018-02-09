@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace HoloLensModule.Utility
 {
+    // Scene遷移時にGameObjectを残しておく
     public class BaseSceneObject : MonoBehaviour
     {
         private static bool CreateFlag = false;
@@ -21,6 +22,7 @@ namespace HoloLensModule.Utility
             } 
         }
 
+        // アプリ終了
         public void ExitApp()
         {
             Application.Quit();

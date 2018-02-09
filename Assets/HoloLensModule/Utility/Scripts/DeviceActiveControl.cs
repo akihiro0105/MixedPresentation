@@ -33,7 +33,7 @@ namespace HoloLensModule.Utility
             }
             else
             {
-                gameObject.SetActive((ActiveDevice == ActiveDeviceModel.Standalone) ? true : false);
+                gameObject.SetActive((ActiveDevice == ActiveDeviceModel.Other) ? true : false);
             }
 #endif
         }

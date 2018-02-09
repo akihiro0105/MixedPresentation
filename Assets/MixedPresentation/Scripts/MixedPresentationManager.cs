@@ -29,7 +29,7 @@ namespace MixedPresentation
         // Use this for initialization
         void Start()
         {
-            HandsGestureManager.HandGestureEvent += HandGestureEvent;
+            //HandsGestureManager.HandGestureEvent += HandGestureEvent;
             isLoading = false;
             importexpot = GetComponent<TransformImportExportManager>();
             importexpot.SaveDirectoryName = SaveDirectoryName;
@@ -90,13 +90,13 @@ namespace MixedPresentation
         void OnDestroy()
         {
             importexpot.TransformImportEvent -= SetJsonTransformGameObject;
-            HandsGestureManager.HandGestureEvent -= HandGestureEvent;
+            //HandsGestureManager.HandGestureEvent -= HandGestureEvent;
             jsonmessagecontrol.ReceiveCameraJsonMessage -= ReceiveCameraJsonMessage;
             jsonmessagecontrol.ReceivePlayJsonMessage -= ReceivePlayJsonMessage;
             jsonmessagecontrol.ReceiveTransformJsonMessage -= ReceiveTransformJsonMessage;
         }
 
-        private void HandGestureEvent(HandsGestureManager.HandGestureState state)
+        /*private void HandGestureEvent(HandsGestureManager.HandGestureState state)
         {
             if (state == HandsGestureManager.HandGestureState.ShiftHold) importexpot.ImportTransform();
             else if (state == HandsGestureManager.HandGestureState.ShiftDoubleTap)
@@ -105,7 +105,7 @@ namespace MixedPresentation
                 transform.LookAt(Camera.main.transform.position + Camera.main.transform.forward);
             }
             else if (state == HandsGestureManager.HandGestureState.MultiDoubleTap) importexpot.ExportTransform();
-        }
+        }*/
 
         private void SetJsonTransformGameObject(JsonSaveGameobject jsonsave)
         {

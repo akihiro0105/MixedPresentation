@@ -107,6 +107,29 @@ namespace HoloLensModule.Environment
 #endif
 
         #region All WorldAnchor Function
+#if UNITY_EDITOR || UNITY_UWP
+        public WorldAnchorStore GetWorldAnchorStore()
+        {
+            if (anchorstore != null)
+            {
+                return anchorstore;
+            }
+            return null;
+        }
+#endif
+
+        public string[] GetWorldAnchorIds()
+        {
+            string[] ids = null;
+#if UNITY_EDITOR || UNITY_UWP
+            if (anchorstore != null)
+            {
+                anchorstore.GetAllIds(ids);
+            }
+#endif
+            return ids;
+        }
+
         public void ClearAllWorldAnchor()
         {
 #if UNITY_EDITOR || UNITY_UWP

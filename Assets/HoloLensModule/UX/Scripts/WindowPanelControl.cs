@@ -26,7 +26,7 @@ public class WindowPanelControl : MonoBehaviour
     void Start()
     {
         WindowName.text = Application.productName;
-        HandPressManager.onReleased += onReleased;
+        //HandPressManager.onReleased += onReleased;
         boundingbox = GetComponent<Boundingbox>();
         audiosource = GetComponent<AudioSource>();
 
@@ -35,7 +35,7 @@ public class WindowPanelControl : MonoBehaviour
 
     void OnDestroy()
     {
-        HandPressManager.onReleased -= onReleased;
+        //HandPressManager.onReleased -= onReleased;
     }
 
     // Update is called once per frame

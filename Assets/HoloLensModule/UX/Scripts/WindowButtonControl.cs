@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using HoloLensModule.Input;
 
-public class WindowButtonControl : MonoBehaviour ,FocusInterface{
+public class WindowButtonControl : MonoBehaviour //,FocusInterface
+{
     [SerializeField]
     private GameObject ButtonObject;
     [SerializeField]

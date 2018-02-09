@@ -12,10 +12,10 @@ namespace HoloLensModule.Utility
         public bool isLineActive = true;
         public bool isLineCalculate = true;
         public bool onlyCurrentObject = false;
-        public bool isOutsideBound = false;
         [Space(14)]
         public bool ActiveMeshFilter = true;
         public bool ActiveCollider = false;
+        public bool ActiveSkinnedMesh = false;
 
         private BoxCollider boxcollider;
         private LineRenderer linerenderer;
@@ -42,20 +42,17 @@ namespace HoloLensModule.Utility
             {
                 ParentBound.center = Vector3.zero;
                 ParentBound.size = Vector3.zero;
-                if (ActiveMeshFilter==true)
+                if (ActiveMeshFilter == true)
                 {
-                    if (isOutsideBound == true)
-                    {
-                        BoundsOutsideMeshFilter(gameObject);
-                    }
-                    else
-                    {
-                        BoundsInsideMeshFilter(gameObject);
-                    }
+                    BoundsMeshFilter(gameObject);
                 }
-                if (ActiveCollider==true)
+                if (ActiveCollider == true)
                 {
                     BoundsCollider(gameObject);
+                }
+                if (ActiveSkinnedMesh == true)
+                {
+                    BoundsSkinnedMesh(gameObject);
                 }
                 boxcollider.center = ParentBound.center;
                 boxcollider.size = ParentBound.size;
@@ -129,31 +126,31 @@ namespace HoloLensModule.Utility
                     for (int j = 0; j < box.Length; j++)
                     {
                         Vector3 center = bufmat.MultiplyPoint3x4(box[j].center);
-                        Vector3 size = GetSize(bufmat, childobj, box[j].size);
+                        Vector3 size = GetSize(bufmat, box[j].size);
                         ParentBound.Encapsulate(new Bounds(center, size));
                     }
                     CapsuleCollider[] cap = childobj.GetComponents<CapsuleCollider>();
                     for (int j = 0; j < cap.Length; j++)
                     {
                         Vector3 center = bufmat.MultiplyPoint3x4(cap[j].center);
-                        Vector3 size = GetSize(bufmat, childobj, new Vector3(cap[j].radius * 2, cap[j].height, cap[j].radius * 2));
+                        Vector3 size = GetSize(bufmat, new Vector3(cap[j].radius * 2, cap[j].height, cap[j].radius * 2));
                         ParentBound.Encapsulate(new Bounds(center, size));
                     }
                     SphereCollider[] sph = childobj.GetComponents<SphereCollider>();
                     for (int j = 0; j < sph.Length; j++)
                     {
                         Vector3 center = bufmat.MultiplyPoint3x4(sph[j].center);
-                        Vector3 size = GetSize(bufmat, childobj, new Vector3(sph[j].radius * 2, sph[j].radius * 2, sph[j].radius * 2));
+                        Vector3 size = GetSize(bufmat, new Vector3(sph[j].radius * 2, sph[j].radius * 2, sph[j].radius * 2));
                         ParentBound.Encapsulate(new Bounds(center, size));
                     }
-                    BoundsInsideMeshFilter(childobj, bufmat);
+                    BoundsCollider(childobj, bufmat);
                 }
             }
         }
 
-        private void BoundsInsideMeshFilter(GameObject obj, Matrix4x4? mat=null)
+        private void BoundsMeshFilter(GameObject obj, Matrix4x4? mat = null)
         {
-            if (mat==null)
+            if (mat == null)
             {
                 MeshFilter mesh = obj.GetComponent<MeshFilter>();
                 if (mesh != null)
@@ -175,51 +172,25 @@ namespace HoloLensModule.Utility
                     if (mesh != null)
                     {
                         Vector3 center = bufmat.MultiplyPoint3x4(mesh.mesh.bounds.center);
-                        Vector3 size = GetSize(bufmat,childobj, mesh.mesh.bounds.size);
+                        Vector3 size = GetSize(bufmat, mesh.mesh.bounds.size);
                         ParentBound.Encapsulate(new Bounds(center, size));
                     }
-                    BoundsInsideMeshFilter(childobj, bufmat);
+                    BoundsMeshFilter(childobj, bufmat);
                 }
             }
         }
 
-        private Bounds? BoundsOutsideMeshFilter(GameObject obj)
+        private void BoundsSkinnedMesh(GameObject obj)
         {
-            bool initflag = false;
-            Bounds initbound = new Bounds(Vector3.zero, Vector3.zero);
-            MeshFilter mesh = obj.GetComponent<MeshFilter>();
-            if (mesh != null)
-            {
-                initbound.Encapsulate(new Bounds(mesh.mesh.bounds.center, mesh.mesh.bounds.size));
-                initflag = true;
-            }
-            if (onlyCurrentObject == false)
-            {
-                for (int i = 0; i < obj.transform.childCount; i++)
-                {
-                    GameObject childobj = obj.transform.GetChild(i).gameObject;
-                    Bounds? childbound = BoundsOutsideMeshFilter(childobj);
-                    if (childbound != null)
-                    {
-                        Matrix4x4 mat = Matrix4x4.TRS(childobj.transform.localPosition, childobj.transform.localRotation, childobj.transform.localScale);
-                        Vector3 center = mat.MultiplyPoint3x4(childbound.Value.center);
-                        Vector3 size = GetSize(mat, childobj, childbound.Value.size);
-                        initbound.Encapsulate(new Bounds(center, size));
-                        initflag = true;
-                    }
-                }
-            }
-            ParentBound.center = initbound.center;
-            ParentBound.size = initbound.size;
-            return (initflag == true) ? (Bounds?)initbound : null;
+            SkinnedMeshRenderer[] mesh = obj.GetComponentsInChildren<SkinnedMeshRenderer>();
+            Renderer[] render = obj.GetComponentsInChildren<Renderer>();
         }
 
-        private Vector3 GetSize(Matrix4x4 mat,GameObject obj, Vector3 setscale)
+        private Vector3 GetSize(Matrix4x4 mat, Vector3 setscale)
         {
-            Vector3 scale = Vector3.Scale(setscale, obj.transform.localScale);
-            Vector3 size1 = mat.MultiplyVector(scale);
+            Vector3 size1 = mat.MultiplyVector(setscale);
             size1.Set(Mathf.Abs(size1.x), Mathf.Abs(size1.y), Mathf.Abs(size1.z));
-            Vector3 size2 = mat.inverse.MultiplyVector(scale);
+            Vector3 size2 = mat.inverse.MultiplyVector(setscale);
             size2.Set(Mathf.Abs(size2.x), Mathf.Abs(size2.y), Mathf.Abs(size2.z));
             Vector3 size = new Vector3(Mathf.Max(size1.x, size2.x), Mathf.Max(size1.y, size2.y), Mathf.Max(size1.z, size2.z));
             return size;

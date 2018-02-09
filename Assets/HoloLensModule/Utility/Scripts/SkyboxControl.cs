@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR || UNITY_UWP
 #if UNITY_2017_2_OR_NEWER
 using UnityEngine.XR.WSA;
 #endif
+#endif
+
 
 namespace HoloLensModule.Utility
 {
@@ -12,6 +15,7 @@ namespace HoloLensModule.Utility
         // Use this for initialization
         void Start()
         {
+#if UNITY_EDITOR || UNITY_UWP
 #if UNITY_2017_2_OR_NEWER
             Camera cam = gameObject.GetComponent<Camera>();
             if (cam != null)
@@ -25,6 +29,7 @@ namespace HoloLensModule.Utility
                     cam.clearFlags = CameraClearFlags.SolidColor;
                 }
             }
+#endif
 #endif
         }
     }

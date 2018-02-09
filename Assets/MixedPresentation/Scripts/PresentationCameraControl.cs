@@ -7,7 +7,7 @@ using HoloLensModule.Utility;
 
 namespace MixedPresentation
 {
-    public class PresentationCameraControl : MonoBehaviour, FocusInterface
+    public class PresentationCameraControl : MonoBehaviour//, FocusInterface
     {
         public Material ActiveMaterial;
         public Material UnActiveMaterial;

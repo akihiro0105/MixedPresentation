@@ -11,7 +11,7 @@ using UnityEditor;
 
 namespace MixedPresentation
 {
-    public class MediaControl : MonoBehaviour, FocusInterface
+    public class MediaControl : MonoBehaviour//, FocusInterface
     {
         public GameObject MediaPanel;
         public Texture defaultTexture = null;
@@ -54,7 +54,7 @@ namespace MixedPresentation
         // Use this for initialization
         void Start()
         {
-            HandsGestureManager.HandGestureEvent += HandGestureEvent;
+           // HandsGestureManager.HandGestureEvent += HandGestureEvent;
             boundingbox = GetComponent<Boundingbox>();
             audiosource = MediaPanel.GetComponent<AudioSource>();
             videoplayer = MediaPanel.GetComponent<VideoPlayer>();
@@ -62,7 +62,7 @@ namespace MixedPresentation
 
         void OnDestroy()
         {
-            HandsGestureManager.HandGestureEvent -= HandGestureEvent;
+           // HandsGestureManager.HandGestureEvent -= HandGestureEvent;
         }
 
         public IEnumerator LoadMedia(string path, MediaType type)
@@ -130,7 +130,7 @@ namespace MixedPresentation
             }
         }
 
-        private void HandGestureEvent(HandsGestureManager.HandGestureState state)
+        /*private void HandGestureEvent(HandsGestureManager.HandGestureState state)
         {
             if (state == HandsGestureManager.HandGestureState.DoubleTap && focusflag == true)
             {
@@ -138,7 +138,7 @@ namespace MixedPresentation
                 isPlay = !isPlay;
                 SetPlay(isPlay);
             }
-        }
+        }*/
 
         public bool GetTapFlag(out bool play)
         {
