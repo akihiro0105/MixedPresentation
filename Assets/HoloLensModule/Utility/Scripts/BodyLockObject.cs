@@ -13,7 +13,8 @@ namespace HoloLensModule.Utility
         void Update()
         {
             transform.LookAt(Camera.main.transform.position);
-            transform.position = Vector3.Lerp(transform.position, Camera.main.transform.position + Camera.main.transform.forward * MoveDistance, Time.deltaTime * MoveSpeed);
+            Vector3 target = Camera.main.transform.position + Camera.main.transform.forward * MoveDistance;
+            transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * MoveSpeed);
         }
     }
 }

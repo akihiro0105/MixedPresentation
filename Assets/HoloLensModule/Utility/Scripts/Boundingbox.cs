@@ -16,6 +16,8 @@ namespace HoloLensModule.Utility
         public bool ActiveMeshFilter = true;
         public bool ActiveCollider = false;
         public bool ActiveSkinnedMesh = false;
+        [Space(14)]
+        public bool isActiveBoxCollider = true;
 
         private BoxCollider boxcollider;
         private LineRenderer linerenderer;
@@ -84,6 +86,15 @@ namespace HoloLensModule.Utility
             else
             {
                 linerenderer.positionCount = 0;
+            }
+
+            if (isActiveBoxCollider==true)
+            {
+                boxcollider.enabled = true;
+            }
+            else
+            {
+                boxcollider.enabled = false;
             }
         }
 
