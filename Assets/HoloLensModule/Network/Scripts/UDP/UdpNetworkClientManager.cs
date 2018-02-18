@@ -17,6 +17,7 @@ namespace HoloLensModule.Network
     {
 #if UNITY_UWP
         private StreamWriter writer=null;
+        private Task task = null;
 #elif UNITY_EDITOR || UNITY_STANDALONE
         private Thread thread;
         private UdpClient udpclient;
@@ -52,18 +53,53 @@ namespace HoloLensModule.Network
         public void SendMessage(string data)
         {
 #if UNITY_UWP
-            if (writer != null) Task.Run(async () =>
-             {
-                 await writer.WriteAsync(data);
-                 await writer.FlushAsync();
-             });
-#elif UNITY_EDITOR || UNITY_STANDALONE
-            thread = new Thread(() =>
+            if (writer != null)
             {
-                byte[] bytes = Encoding.UTF8.GetBytes(data);
-                udpclient.Send(bytes, bytes.Length);
-            });
-            thread.Start();
+                if (task == null || task.IsCompleted == true)
+                {
+                    task = Task.Run(async () =>
+                    {
+                        await writer.WriteAsync(data);
+                        await writer.FlushAsync();
+                    });
+                }
+            }
+#elif UNITY_EDITOR || UNITY_STANDALONE
+            if (thread==null || thread.ThreadState!=ThreadState.Running)
+            {
+                thread = new Thread(() =>
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(data);
+                    udpclient.Send(bytes, bytes.Length);
+                });
+                thread.Start();
+            }
+#endif
+        }
+
+        public void SendMessage(byte[] data)
+        {
+#if UNITY_UWP
+            if (writer != null)
+            {
+                if (task == null || task.IsCompleted == true)
+                {
+                    task = Task.Run(async () =>
+                  {
+                      await writer.BaseStream.WriteAsync(data, 0, data.Length);
+                      await writer.FlushAsync();
+                  });
+                }
+            }
+#elif UNITY_EDITOR || UNITY_STANDALONE
+            if (thread == null || thread.ThreadState != ThreadState.Running)
+            {
+                thread = new Thread(() =>
+                {
+                    udpclient.Send(data, data.Length);
+                });
+                thread.Start();
+            }
 #endif
         }
     }

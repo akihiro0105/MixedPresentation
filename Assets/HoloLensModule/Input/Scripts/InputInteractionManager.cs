@@ -118,7 +118,7 @@ namespace HoloLensModule.Input
         void SourceDetected(InteractionSourceState state)
         {
          Vector3 v;
-            if (state.properties.location.(out v) == true)
+            if (state.properties.location.TryGetPosition(out v) == true)
             {
                     HandList.Add(state.source.id, new HandPoint(v));
                 HandPoint handpoint;
@@ -130,7 +130,7 @@ namespace HoloLensModule.Input
         void SourceUpdated(InteractionSourceState state)
         {
         Vector3 v;
-            if (state.properties.location.(out v) == true)
+            if (state.properties.location.TryGetPosition(out v) == true)
             {
                 HandPoint handpoint;
                 if (HandList.TryGetValue(state.source.id,out handpoint))
@@ -166,7 +166,7 @@ namespace HoloLensModule.Input
         HandPoint handpoint;
                 if (HandList.TryGetValue(state.source.id,out handpoint))
                 {
-        if (onReleaseEvent != null) onReleaseEvent(ButtonType.Press, state.state.source.id,handpoint);
+        if (onReleaseEvent != null) onReleaseEvent(ButtonType.Press, state.source.id,handpoint);
         }
         }
 

@@ -16,6 +16,9 @@ namespace HoloLensModule.Network
     {
         public delegate void UdpNetworkListenEventHandler(string data,string address);
         public UdpNetworkListenEventHandler UdpNetworkListenEvent;
+
+        public delegate void UdpNetworkListenByteEventHandler(byte[] data, string address);
+        public UdpNetworkListenByteEventHandler UdpNetworkByteListenEvent;
 #if UNITY_UWP
         private DatagramSocket socket = null;
 #elif UNITY_EDITOR || UNITY_STANDALONE
@@ -44,6 +47,7 @@ namespace HoloLensModule.Network
                     {
                         byte[] bytes = udpclient.Receive(ref remote);
                         if (UdpNetworkListenEvent != null) UdpNetworkListenEvent(Encoding.UTF8.GetString(bytes), remote.Address.ToString());
+                        if (UdpNetworkByteListenEvent != null) UdpNetworkByteListenEvent(bytes, remote.Address.ToString());
                     }
                     catch (Exception) { }
                 }
@@ -67,6 +71,11 @@ namespace HoloLensModule.Network
         async void MessageReceived(DatagramSocket sender, DatagramSocketMessageReceivedEventArgs args)
         {
             StreamReader reader = new StreamReader(args.GetDataStream().AsStreamForRead());
+            using (MemoryStream ms = new MemoryStream())
+            {
+                await reader.BaseStream.CopyToAsync(ms);
+                if (UdpNetworkByteListenEvent != null) UdpNetworkByteListenEvent(ms.ToArray(), args.RemoteAddress.DisplayName);
+            }
             string data = await reader.ReadLineAsync();
             if (UdpNetworkListenEvent != null) UdpNetworkListenEvent(data, args.RemoteAddress.DisplayName);
         }
