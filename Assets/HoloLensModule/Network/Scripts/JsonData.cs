@@ -62,6 +62,30 @@ namespace HoloLensModule
     }
 
     [Serializable]
+    public class JsonColor
+    {
+        public float r;
+        public float g;
+        public float b;
+        public float a;
+
+        public JsonColor() { }
+
+        public JsonColor(Color c)
+        {
+            r = c.r;
+            g = c.g;
+            b = c.b;
+            a = c.a;
+        }
+
+        public Color GetColor()
+        {
+            return new Color(r, g, b, a);
+        }
+    }
+
+    [Serializable]
     public class JsonTransform
     {
         public JsonVector3 position;
