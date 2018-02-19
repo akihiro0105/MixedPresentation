@@ -4,6 +4,7 @@ using UnityEngine;
 #if UNITY_EDITOR || UNITY_UWP
 #if UNITY_2017_2_OR_NEWER
 using UnityEngine.XR.WSA;
+#else
 #endif
 #endif
 
@@ -29,6 +30,8 @@ namespace HoloLensModule.Utility
                     cam.clearFlags = CameraClearFlags.SolidColor;
                 }
             }
+#else
+            
 #endif
 #endif
         }

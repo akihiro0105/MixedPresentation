@@ -17,7 +17,7 @@ namespace HoloLensModule.Environment
         // デバイス名 string
         // バッテリー残量 % 残り時間 time
         // Wifi情報
-        // ネットワーク情報 接続状態 接続先 ip mac port
+        // ネットワーク情報 接続状態 接続先 ip subnetmask
         // cpu稼働率 %
         // メモリ使用率 % MB
         // 温度 c
@@ -29,5 +29,21 @@ namespace HoloLensModule.Environment
         {
 
         }
+
+        public string GetDevicename()
+        {
+            return "name";
+        }
+
+        public string GetIPAddres()
+        {
+            return "";
+        }
+
+        public string GetSubnetMask()
+        {
+            return "";
+        }
+
     }
 }
