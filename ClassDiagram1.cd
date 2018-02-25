@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HoloLensModule.Environment.SystemInfomation" Collapsed="true">
+    <Position X="3" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAwAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Environment\Scripts\SystemInfomation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Environment.TrackingWorldState" Collapsed="true">
+    <Position X="8.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAgCAAAAAAAAAAAAAAAAAAAAAEAAAAAgAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Environment\Scripts\TrackingWorldState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Environment.WorldAnchorControl" Collapsed="true">
+    <Position X="8.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAABAABEgCAAAAAAAAAAAAAAAAAAAABEAAAEAAAACIA=</HashCode>
+      <FileName>Assets\HoloLensModule\Environment\Scripts\WorldAnchorControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputSample" Collapsed="true">
+    <Position X="10" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAgEAAAAgAAACAAAAAAAAAAQAAI=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scene\InputSample.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Input.GazeControl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="3" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAACAAAIAQAAggAAAAAgAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\GazeControl.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HoloLensModule.Input.GazeManager" Collapsed="true">
+    <Position X="4.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABSBABAAACEAIAAAABAAAAAABgAAAAAAAAgCAAIAEAQ=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\GazeManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Input.GestureManager" Collapsed="true">
+    <Position X="6.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASBAAAAQCAAAAAAABAAAAAACAAAAAAAgAigAAAAAoA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\GestureManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Input.InputInteractionManager" Collapsed="true">
+    <Position X="8.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAgCQAEAAAQAAAAAAAKAAAAAAAiAiAAEAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\InputInteractionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Input.PointerControl" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAIAAAAAAAAAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\PointerControl.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HoloLensModule.Input.PointerManager" Collapsed="true">
+    <Position X="3" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAACAAEAAAAAQEAAAACAAAACAAgAiAAAAAEAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\PointerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Input.RaycastManager" Collapsed="true">
+    <Position X="6.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAAQAAACAAACAAAAAAAAAEAAggAAAAAIAAAQAAAAI=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\RaycastManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Input.SelectActionEvent" Collapsed="true">
+    <Position X="10" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\SelectObjectAction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Input.DragActionEvent" Collapsed="true">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\SelectObjectAction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Input.SelectObjectAction" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAACCAAAAAAAAhFAAAAgCAACAQAAAAAAAAQAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\SelectObjectAction.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HoloLensModule.JsonVector3" Collapsed="true">
+    <Position X="4.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAACAABgAQAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\JsonData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.JsonQuaternion" Collapsed="true">
+    <Position X="10" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAAAQAAAAAAAAhgAQAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\JsonData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.JsonColor" Collapsed="true">
+    <Position X="11.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACoAQABAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\JsonData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.JsonTransform" Collapsed="true">
+    <Position X="13.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAIAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\JsonData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.HoloLensModuleSingleton&lt;T&gt;" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAABAAAAAQAAABAAAAEA=</HashCode>
+      <FileName>Assets\HoloLensModule\Utility\Scripts\HoloLensModuleSingleton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Network.RestAPIJsonManager" Collapsed="true">
+    <Position X="8.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAABAAAAAAQAIAIAAQAKAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\RestAPI\RestAPIJsonManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Network.TcpNetworkClientManager" Collapsed="true">
+    <Position X="4.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAACAAIAAQACAAAAAACAAAIAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\TCP\TcpNetworkClientManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Network.TcpNetworkServerManager" Collapsed="true">
+    <Position X="6.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\TCP\TcpNetworkServerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Network.UDPListenerManager" Collapsed="true">
+    <Position X="11.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAIAAAQAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\UDP\UDPListenerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Network.UdpNetworkClientManager" Collapsed="true">
+    <Position X="13.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAACAAAAAQAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\UDP\UdpNetworkClientManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Network.UdpNetworkListenManager" Collapsed="true">
+    <Position X="3" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAABAAAAAEAAAAAAAAYAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\UDP\UdpNetworkListenManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Network.UDPSenderManager" Collapsed="true">
+    <Position X="4.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAACACAAAAAAAAAAAAABABAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Network\Scripts\UDP\UDPSenderManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Utility.BaseSceneObject" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\HoloLensModule\Utility\Scripts\BaseSceneObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Utility.BodyLockObject" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Utility\Scripts\BodyLockObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Utility.Boundingbox" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAQASACIAKAQAICgAAAAAAAggAAAACAAAAAACAAABAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Utility\Scripts\Boundingbox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Utility.DebugConsole" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAARAAAAACAAAAAAAAAIAIAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Utility\Scripts\DebugConsole.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Utility.DeviceActiveControl" Collapsed="true">
+    <Position X="10" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Utility\Scripts\DeviceActiveControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Utility.FileIOControl" Collapsed="true">
+    <Position X="13.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAEEACAAAAACAAIAAAAAAEAAAAAAAAAAAEAAABAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Utility\Scripts\FileIOControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.Utility.SkyboxControl" Collapsed="true">
+    <Position X="13.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Utility\Scripts\SkyboxControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.UX.MessagePanelControl" Collapsed="true">
+    <Position X="10" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAIACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\UX\Scripts\MessagePanelControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HoloLensModule.UX.WindowPanelControl" Collapsed="true">
+    <Position X="6.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAECAAiCAAgAAAAAEAAAAAACAECAAACAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\UX\Scripts\WindowPanelControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.DesktopCameraViewer" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAABAAAAiAAoAIAAAAAAACAAAAAACAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\DesktopCameraViewer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.JsonMessageControl" Collapsed="true">
+    <Position X="6.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQFAAAABChAAKAEIAgAAABAAAAAAAABAAAAACAAEAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.JsonVector3" Collapsed="true">
+    <Position X="6.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABABAAAAAAAAAAAAAAAAAAABgAQAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.JsonQuaternion" Collapsed="true">
+    <Position X="8.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABABAAAAAAAAAAAAAAAAAAAhgAQAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.JsonTransform" Collapsed="true">
+    <Position X="3" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAACAIAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.JsonGameObject" Collapsed="true">
+    <Position X="13.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.JsonGameObjectFlag" Collapsed="true">
+    <Position X="3" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.JsonMessage" Collapsed="true">
+    <Position X="4.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAgAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.JsonSaveGameobject" Collapsed="true">
+    <Position X="11.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.MediaControl" Collapsed="true">
+    <Position X="8.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAABSAgAgAAAIjAAAAAiAABUQAgwAACAQAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\MediaControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.MixedPresentationManager" Collapsed="true">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBJgAAACACACAIAAoAAEBAAACAQAAQAQAAAAAEAQA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\MixedPresentationManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.PresentationCameraControl" Collapsed="true">
+    <Position X="4.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABSAACAAAAIjAABAAgCAAAQCgQAAAAQAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\PresentationCameraControl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MixedPresentation.TransformImportExportManager" Collapsed="true">
+    <Position X="10" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQABABAAAAAAAAAIACABEAIAAAAEAQAAAAAIAAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\TransformImportExportManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="HoloLensModule.Input.ITapInterface" Collapsed="true">
+    <Position X="13.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\GazeManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HoloLensModule.Input.IDragInterface" Collapsed="true">
+    <Position X="3" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\GazeManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HoloLensModule.Input.IGazeInterface" Collapsed="true">
+    <Position X="6.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\GazeManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HoloLensModule.Input.ISelectInterface" Collapsed="true">
+    <Position X="11.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\PointerManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HoloLensModule.Input.IMoveInterface" Collapsed="true">
+    <Position X="8.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\PointerManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HoloLensModule.Input.IPointerInterface" Collapsed="true">
+    <Position X="10" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\PointerManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HoloLensModule.Input.IFocusInterface" Collapsed="true">
+    <Position X="4.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\HoloLensModule\Input\Scripts\RaycastManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="MixedPresentation.JsonMessageType" Collapsed="true">
+    <Position X="3" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Assets\MixedPresentation\Scripts\JsonMessageData.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Yu Gothic UI" Size="9" />
+</ClassDiagram>

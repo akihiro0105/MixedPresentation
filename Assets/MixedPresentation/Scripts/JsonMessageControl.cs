@@ -10,8 +10,8 @@ namespace MixedPresentation
         public string BroadcastAddress = "";
         public int UDPport = 8000;
 
-        private UdpNetworkClientManager udpclient;
-        private UdpNetworkListenManager udpserver;
+        //private UdpNetworkClientManager udpclient;
+        //private UdpNetworkListenManager udpserver;
         private JsonMessage SendJsonMessage = new JsonMessage();
         private Queue<JsonMessage> ReceiveJsonMessageQueue = new Queue<JsonMessage>();
 
@@ -23,10 +23,10 @@ namespace MixedPresentation
         // Use this for initialization
         void Start()
         {
-            if (BroadcastAddress == null || BroadcastAddress == "") udpclient = new UdpNetworkClientManager(UDPport);
-            else udpclient = new UdpNetworkClientManager(UDPport, BroadcastAddress);
-            udpserver = new UdpNetworkListenManager(UDPport);
-            udpserver.UdpNetworkListenEvent += UdpNetworkListenEvent;
+            //if (BroadcastAddress == null || BroadcastAddress == "") udpclient = new UdpNetworkClientManager(UDPport);
+            //else udpclient = new UdpNetworkClientManager(UDPport, BroadcastAddress);
+            //udpserver = new UdpNetworkListenManager(UDPport);
+            //udpserver.UdpNetworkListenEvent += UdpNetworkListenEvent;
         }
 
         // Update is called once per frame
@@ -55,16 +55,16 @@ namespace MixedPresentation
 
         void OnDestroy()
         {
-            udpclient.DeleteManager();
-            udpserver.DeleteManager();
-            udpserver.UdpNetworkListenEvent -= UdpNetworkListenEvent;
+            //udpclient.DeleteManager();
+            //udpserver.DeleteManager();
+            //udpserver.UdpNetworkListenEvent -= UdpNetworkListenEvent;
         }
 
         public void SendCameraMessage(int CamNum)
         {
             SendJsonMessage.type = (int)JsonMessageType.Camera;
             SendJsonMessage.CamNum = CamNum;
-            udpclient.SendMessage(JsonUtility.ToJson(SendJsonMessage));
+            //udpclient.SendMessage(JsonUtility.ToJson(SendJsonMessage));
         }
 
         public void SendPlayMessage(string name,bool flag)
@@ -72,14 +72,14 @@ namespace MixedPresentation
             SendJsonMessage.type = (int)JsonMessageType.Play;
             SendJsonMessage.gameobjectflag.name = name;
             SendJsonMessage.gameobjectflag.flag = flag;
-            udpclient.SendMessage(JsonUtility.ToJson(SendJsonMessage));
+            //udpclient.SendMessage(JsonUtility.ToJson(SendJsonMessage));
         }
 
         public void SendTransformMessage(JsonGameObject obj)
         {
             SendJsonMessage.type = (int)JsonMessageType.Transform;
             SendJsonMessage.gameobject = obj;
-            udpclient.SendMessage(JsonUtility.ToJson(SendJsonMessage));
+            //udpclient.SendMessage(JsonUtility.ToJson(SendJsonMessage));
         }
 
         private void UdpNetworkListenEvent(string data, string address) { ReceiveJsonMessageQueue.Enqueue(JsonUtility.FromJson<JsonMessage>(data)); }

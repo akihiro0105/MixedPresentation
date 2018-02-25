@@ -17,6 +17,7 @@ namespace HoloLensModule.Input
         [SerializeField]
         private float maxDistance = 30.0f;
         public bool isActiveRenderViewportScale = true;
+        public float maxViewportDistance = 2.0f;
 
         public delegate void RaycastFocusEventHandler(RaycastHit? info);
         public RaycastFocusEventHandler RaycastFocusEvent;
@@ -56,19 +57,8 @@ namespace HoloLensModule.Input
                 if (RaycastFocusEvent != null) RaycastFocusEvent(hitinfo);
 
                 float distance = hitinfo.distance;
-
-                if (distance>2.0f)
-                {
-                    viewportscale = 1.0f;
-                }
-                else if (distance>1.0f)
-                {
-                    viewportscale = 0.5f;
-                }
-                else
-                {
-                    viewportscale = 0.1f;
-                }
+                float a = 1.0f / (maxViewportDistance* maxViewportDistance);
+                viewportscale = a * distance * distance;
 
             }
             else
@@ -78,26 +68,18 @@ namespace HoloLensModule.Input
                 viewportscale = initRenderViewportScale;
             }
 
-            if (isActiveRenderViewportScale==true)
+            if (isActiveRenderViewportScale==false)
             {
+                viewportscale = initRenderViewportScale;
+            }
+
 #if UNITY_EDITOR || UNITY_UWP
 #if UNITY_2017_2_OR_NEWER
-                XRSettings.renderViewportScale = viewportscale;
+            XRSettings.renderViewportScale = viewportscale;
 #else
                 VRSettings.renderViewportScale = viewportscale;
 #endif
 #endif
-            }
-            else
-            {
-#if UNITY_EDITOR || UNITY_UWP
-#if UNITY_2017_2_OR_NEWER
-                XRSettings.renderViewportScale = initRenderViewportScale;
-#else
-                VRSettings.renderViewportScale = initRenderViewportScale;
-#endif
-#endif
-            }
         }
 
         private void SearchFocusObject(GameObject obj)
