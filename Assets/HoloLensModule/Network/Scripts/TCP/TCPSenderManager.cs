@@ -23,10 +23,11 @@ namespace HoloLensModule.Network
 
 #if UNITY_UWP
 #elif UNITY_EDITOR || UNITY_STANDALONE
+        private Thread thread = null;
         private TcpClient tcpclient = null;
         private NetworkStream stream = null;
         private MemoryStream allBytes = null;
-        private byte[] readBytes = null;
+        private byte[] readBytes = new byte[1024];
 #endif
 
         public TCPSenderManager() { }
@@ -42,34 +43,37 @@ namespace HoloLensModule.Network
 #elif UNITY_EDITOR || UNITY_STANDALONE
             if (tcpclient==null)
             {
-                tcpclient = new TcpClient();
-                tcpclient.BeginConnect(ipaddress, port, new AsyncCallback(ConnectedCallback), tcpclient);
+                thread = new Thread(() => {
+                    tcpclient = new TcpClient(ipaddress, port);
+                    tcpclient.ReceiveTimeout = 100;
+                    stream = tcpclient.GetStream();
+                    if (stream!=null)
+                    {
+                        if (allBytes != null)
+                        {
+                            allBytes.Close();
+                        }
+                        allBytes = new MemoryStream();
+                        if (stream.CanRead)
+                        {
+                            stream.BeginRead(readBytes, 0, readBytes.Length, new AsyncCallback(ReceiveCallback), null);
+                        }
+                    }
+                });
+                thread.Start();
             }
 #endif
         }
 
 #if UNITY_UWP
 #elif UNITY_EDITOR || UNITY_STANDALONE
-        private void ConnectedCallback(IAsyncResult result)
-        {
-            TcpClient tcp = (TcpClient)result.AsyncState;
-            stream = tcp.GetStream();
-            readBytes = new byte[1024];
-            if (allBytes!=null)
-            {
-                allBytes.Close();
-            }
-            allBytes = new MemoryStream();
-            stream.BeginRead(readBytes, 0, readBytes.Length, new AsyncCallback(ReceiveCallback), stream);
-        }
-
         private void ReceiveCallback(IAsyncResult result)
         {
-            NetworkStream s = (NetworkStream)result.AsyncState;
-            int readbyte = s.EndRead(result);
+            int count = tcpclient.ReceiveBufferSize;
+            int readbyte = stream.EndRead(result);
             if (readbyte>0)
             {
-                allBytes.Write(readBytes, 0, readBytes.Length);
+                allBytes.Write(readBytes, 0, readbyte);
             }
             else
             {
@@ -77,7 +81,7 @@ namespace HoloLensModule.Network
                 if (ReceiveMessageEvent != null) ReceiveMessageEvent(allBytes.ToString());
                 allBytes.Close();
             }
-            s.BeginRead(readBytes, 0, readBytes.Length, new AsyncCallback(ReceiveCallback), stream);
+            stream.BeginRead(readBytes, 0, readBytes.Length, new AsyncCallback(ReceiveCallback), null);
         }
 #endif
 
@@ -85,6 +89,19 @@ namespace HoloLensModule.Network
         {
 #if UNITY_UWP
 #elif UNITY_EDITOR || UNITY_STANDALONE
+            if (stream != null)
+            {
+                if (thread == null || thread.ThreadState != ThreadState.Running)
+                {
+                    thread = new Thread(() =>
+                    {
+                        byte[] bytes = Encoding.UTF8.GetBytes(ms);
+                        stream.Write(bytes, 0, bytes.Length);
+                    });
+                    thread.Start();
+                    return true;
+                }
+            }
 #endif
             return false;
         }
@@ -93,6 +110,18 @@ namespace HoloLensModule.Network
         {
 #if UNITY_UWP
 #elif UNITY_EDITOR || UNITY_STANDALONE
+            if (stream != null)
+            {
+                if (thread == null || thread.ThreadState != ThreadState.Running)
+                {
+                    thread = new Thread(() =>
+                    {
+                        stream.Write(data, 0, data.Length);
+                    });
+                    thread.Start();
+                    return true;
+                }
+            }
 #endif
             return false;
         }
@@ -103,7 +132,15 @@ namespace HoloLensModule.Network
 #elif UNITY_EDITOR || UNITY_STANDALONE
             if (tcpclient!=null)
             {
-                tcpclient.EndConnect(null);
+                stream.Close();
+                stream = null;
+                tcpclient.Close();
+                tcpclient = null;
+            }
+            if (thread != null)
+            {
+                thread.Abort();
+                thread = null;
             }
 #endif
         }

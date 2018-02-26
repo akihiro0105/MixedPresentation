@@ -6,29 +6,40 @@ using HoloLensModule.Network;
 public class Network_Sample : MonoBehaviour {
     public GameObject sampleobject;
 
-    // udpでipaddress送信
-    // 2秒間自分以外のデータが返ってこなかったら自分がtcpサーバーに移行
-    // 2秒以内に自分以外のデータが返ってきたらtcpクライアントモードに移行
-
     private UDPListenerManager listener;
-
     private UDPSenderManager client;
+
+    private TCPSenderManager tcpclient;
+    private TcpNetworkServerManager server;
 
     private string mssting = "";
 	// Use this for initialization
 	void Start () {
-        listener = new UDPListenerManager(8008);
-        listener.ListenerMessageEvent += ListenerMessageEvent;
+        //listener = new UDPListenerManager(8008);
+        //listener.ListenerMessageEvent += ListenerMessageEvent;
 
-        client = new UDPSenderManager("127.0.0.1", 8008);
+        //client = new UDPSenderManager("127.0.0.1", 8008);
+
+        tcpclient = new TCPSenderManager("127.0.0.1", 8009);
+        tcpclient.ReceiveMessageEvent += ListenerTCPMessageEvent;
+
+        server = new TcpNetworkServerManager(8009);
     }
 
     void OnDestroy()
     {
-        listener.ListenerMessageEvent -= ListenerMessageEvent;
-        listener.DisConnectListener();
+        //listener.ListenerMessageEvent -= ListenerMessageEvent;
+        //listener.DisConnectListener();
 
-        client.DisConnectSender();
+        //client.DisConnectSender();
+
+        //tcpclient.ReceiveMessage -= ListenerTCPMessageEvent;
+        tcpclient.ReceiveMessageEvent -= ListenerTCPMessageEvent;
+        tcpclient.DisConnectSender();
+
+        //tcpclient.DeleteManager();
+
+        server.DeleteManager();
     }
 
     // Update is called once per frame
@@ -46,11 +57,17 @@ public class Network_Sample : MonoBehaviour {
             sampleobject.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
         }
 
-        client.SendMessage("Hello");
+        //client.SendMessage("Hello");
+        tcpclient.SendMessage("Hello TCP");
     }
 
     private void ListenerMessageEvent(string ms,string address)
     {
         mssting = ms + address;
+    }
+
+    private void ListenerTCPMessageEvent(string ms)
+    {
+        mssting = ms;
     }
 }

@@ -6,6 +6,7 @@ namespace HoloLensModule.Input
 {
     public class GazeControl : MonoBehaviour,IGazeInterface
     {
+        public bool isView = true;
         public GameObject GazeModel;
 
         private Vector3 InitScale;
@@ -41,7 +42,11 @@ namespace HoloLensModule.Input
         // Update is called once per frame
         void Update()
         {
-            GazeModel.transform.localScale = Vector3.Lerp(GazeModel.transform.localScale, NextScale, speed);
+            GazeModel.SetActive(isView);
+            if (isView==true)
+            {
+                GazeModel.transform.localScale = Vector3.Lerp(GazeModel.transform.localScale, NextScale, speed);
+            }
         }
     }
 }
